@@ -1,0 +1,29 @@
+{
+    "files.associations": {
+        "*.md": "markdown",
+        "jy901.h": "c",
+        "data.h": "c",
+        "filter.h": "c",
+        "server.h": "c",
+        "sensor.h": "c",
+        "datatype.h": "c",
+        "propellercontrol.h": "c",
+        "pca9685.h": "c",
+        "pwmDevices.h": "c",
+        "focus.h": "c",
+        "pid.h": "c",
+        "led.h": "c",
+        "devicethread.h": "c",
+        "iodevices.h": "c",
+        "stdio.h": "c",
+        "ano_link.h": "c",
+        "wiringpi.h": "c",
+        "elog.h": "c",
+        "ms5837.h": "c",
+        "sys_status.h": "c",
+        "debug.h": "c"
+    },
+    "python.jediEnabled": false,
+    "C_Cpp.errorSquiggles": "Disabled"
+
+}
