@@ -1,14 +1,14 @@
 
 
 <div align="center">
-  <a href="https://github.com/zengwangfa/rov-master"><img src="https://zengwangfa.oss-cn-shanghai.aliyuncs.com/rov/rovmaster(vector)1.png" alt=""></a>
-  <a href="https://github.com/zengwangfa/rov-master"><h1>ROV-Master</h2></a>
+  <a href="https://github.com/ROV-Master/rovmaster-embedded"><img src="https://zengwangfa.oss-cn-shanghai.aliyuncs.com/rov/rovmaster(vector)1.png" alt=""></a>
+  <a href="https://github.com/ROV-Master/rovmaster-embedded"><h1>ROV-Master</h2></a>
 </div>
 
 
 <div align="center">
   <a href="http://wiki.friendlyarm.com/wiki/index.php/NanoPi_NEO_Core/zh"><img src="https://img.shields.io/badge/Device-Nanopi NEO Core-brigreen.svg?style=flat-square" alt="Device"></a>
-  <a href="https://img.shields.io"><img src="https://img.shields.io/github/repo-size/zengwangfa/rov-master?style=flat-square" alt="Size"></a>
+  <a href="https://img.shields.io"><img src="https://img.shields.io/github/repo-size/ROV-Master/rovmaster-embedded?style=flat-square" alt="Size"></a>
 </div>
 
 # 1. 介绍
@@ -21,8 +21,8 @@
 # 2. 使用
 - 运行环境：NanoPi NEO
 ```shell
-$ git clone https://github.com/zengwangfa/rov-master
-$ cd rov-master
+$ git clone https://github.com/ROV-Master/rovmaster-embedded
+$ cd rovmaster-embedded
 ```
 
 ## 2.1 安装相关依赖
