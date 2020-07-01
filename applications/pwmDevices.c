@@ -170,17 +170,15 @@ void *pwmDevs_thread(void *arg)
     }
 }
 
-// TODO 数据服务器未接收到数据才进行停转
+// TODO 数据服务器接收到数据才进行停转
 void *robotArm_thread(void *arg)
 {
     while (1)
     {
-        easyPWM_devices_handle(&rovdev.robot_arm, &cmd_data.robot_arm);
-        delay(120); // 由于上位机发送指令速率有限(大概)，需要延时等待120ms，再判断是否是连续按下 机械手的控制键
-        if (0x00 == cmd_data.robot_arm)
-        {
-            rovdev.robot_arm.cur = rovdev.robot_arm.med; // 停转
-        }
+
+        easyPWM_devices_handle(&rovdev.robot_arm, &cmd_data.arm);
+        delay(100);
+        rovdev.robot_arm.cur = rovdev.robot_arm.med; // 停转
     }
 }
 
