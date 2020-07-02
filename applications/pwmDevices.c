@@ -103,14 +103,13 @@ void propellerPwm_update(propellerPower_t *propeller)
 {
     int16_t power[6];
 
-    power[0] = PROPELLER_POWER_STOP + propeller->leftUp; // 水平推进器
-    power[1] = PROPELLER_POWER_STOP + propeller->leftDown;
-    power[2] = PROPELLER_POWER_STOP + propeller->rightUp;
-    power[3] = PROPELLER_POWER_STOP + propeller->rightDown;
+    power[0] = PROPELLER_POWER_STOP + propeller->rightUp;     // 右上 PWM0
+    power[1] = PROPELLER_POWER_STOP + propeller->rightMiddle; // 右中 PWM1
+    power[2] = PROPELLER_POWER_STOP + propeller->rightDown;   // 右下 PWM2
 
-    power[4] = PROPELLER_POWER_STOP + propeller->leftMiddle; // 垂直推进器
-    power[5] = PROPELLER_POWER_STOP + propeller->rightMiddle;
-
+    power[3] = PROPELLER_POWER_STOP + propeller->leftUp;     // 左上 PWM3
+    power[4] = PROPELLER_POWER_STOP + propeller->leftMiddle; // 左中 PWM4
+    power[5] = PROPELLER_POWER_STOP + propeller->leftDown;   // 左下 PWM5
     // PWM限幅
     propellerPwm_output_limit(power);
 
