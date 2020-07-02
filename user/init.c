@@ -31,16 +31,16 @@ rovInfo_t rovInfo;
 rovDev_t rovdev = {
     .light = {
         // 探照灯
-        .name = "light    ",
+        .name = "light",
         .pMax = 20 * 1000, // 单位us
         .nMax = 0,
-        .speed = 1000,
+        .speed = 20 * 1000,
         .channel = LIGHT_CHANNEL,
     },
 
     .yuntai = {
         // 云台
-        .name = "yuntai   ",
+        .name = "yuntai",
         .pMax = 5000,
         .med = 1500,
         .nMax = 1000,

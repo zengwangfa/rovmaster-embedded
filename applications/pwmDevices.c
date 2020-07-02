@@ -143,6 +143,10 @@ void easyPWM_devices_handle(easyPWM_dev_t *easyPWM, uint8_t *action)
 
     easyPwm_output_limit(easyPWM); // 限幅
     pwmWrite(PCA9685_PIN_BASE + easyPWM->channel, calcTicks(easyPWM->cur));
+
+    // 如果设备为灯，则通道+1输出相同的PWM(10、11通道为灯)
+    if (!strcmp(easyPWM->name, "light"))
+        pwmWrite(PCA9685_PIN_BASE + easyPWM->channel + 1, calcTicks(easyPWM->cur));
 }
 
 /*******************************************************************************************************************/
@@ -165,6 +169,7 @@ void *pwmDevs_thread(void *arg)
         propellerPwm_update(&rovdev.propellerPower);
         easyPWM_devices_handle(&rovdev.yuntai, &cmd_data.yuntai);
         easyPWM_devices_handle(&rovdev.light, &cmd_data.light);
+
         delay(1);
     }
 }
