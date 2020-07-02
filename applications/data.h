@@ -29,11 +29,11 @@ typedef struct
     uint8_t rotate;     //【旋转】
 
     /* 设备类 */
-    uint8_t power;     //【油门】	0x00~0xff (0~255) 表示的油门大小：4档位可调，LB加档，LT减档，可分别设置4个档位油门大小
-    uint8_t light;     //【灯光】	0x01 打开、0x00 关闭（默认）
-    uint8_t camera;    //【聚焦】  0x01 聚焦、0x02 放焦、  0x11 放大、0x12 缩小、0x00表示不动作（默认）
-    uint8_t yuntai;    //【云台】	0x01 向上、0x02 向下、  0x00表示不动作（默认）
-    uint8_t robot_arm; //【机械臂】0x01 张开、0x02 关闭、  0x00表示不动作（默认）
+    uint8_t power;  //【油门】	0x00~0xff (0~255) 表示的油门大小：4档位可调，LB加档，LT减档，可分别设置4个档位油门大小
+    uint8_t light;  //【灯光】	0x01 打开、0x00 关闭（默认）
+    uint8_t camera; //【聚焦】  0x01 聚焦、0x02 放焦、  0x11 放大、0x12 缩小、0x00表示不动作（默认）
+    uint8_t yuntai; //【云台】	0x01 向上、0x02 向下、  0x00表示不动作（默认）
+    uint8_t arm;    //【机械臂】0x01 张开、0x02 关闭、  0x00表示不动作（默认）
 
 } cmd_t; /* 控制命令 */
 
@@ -53,5 +53,4 @@ void rov_all_params_init(void);
 
 /* 上位机的控制数据 */
 extern cmd_t cmd_data;
-
 #endif

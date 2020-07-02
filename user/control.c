@@ -6,14 +6,25 @@
 #include "../applications/PID.h"
 #include "../applications/data.h"
 #include "../applications/pwmDevices.h"
+#include "../applications/sensor.h"
 
 #include "control.h"
 #include "datatype.h"
+#include "jy901.h"
+
 
 #include <elog.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+
+
+#define STEP_VLAUE 4
+
+propellerPower_t PropellerBuffer = {0,0,0,0,0,0};//推进器缓冲区；
+int location_keep_timer = 0;
+extern static jy901_t *jy901 ;
+
 
 void fourAixs_get_rocker_params(rockerInfo_t *rc, cmd_t *cmd) // 获取摇杆参数值
 {
@@ -121,7 +132,7 @@ void sixAixs_get_rocker_params(rockerInfo_t *rc, cmd_t *cmd) // 获取摇杆参�
     rc->fy = cmd->left_right - 128; // Y轴摇杆值
     rc->fz = cmd->up_down - 127;    // 当大于128时上浮，小于128时下潜，差值越大，速度越快
     rc->yaw = cmd->rotate - 128;    // 偏航摇杆值
-
+    
     /* 垂直方向 */
     if (abs(rc->fz) < 10) // Z轴摇杆值较小时不进行计算，防止过度累加
         rc->fz = 0;
@@ -137,3 +148,123 @@ void sixAixs_get_rocker_params(rockerInfo_t *rc, cmd_t *cmd) // 获取摇杆参�
 
     rc->percent = cmd->power / 100; // power最大为255 计算动力百分比
 }
+
+/**
+ * @brief  六轴推进器控制
+ * @param  rocker_t 摇杆结构体
+ */
+void sixAixs_control_keep(rockerInfo_t *rc,propellerPower_t *propeller,powerconpensation_t *powerconpensation)
+{
+    static int propeller_Value = 1;                         //推进器比例数值
+
+    static int propeller_Direction_Down_X = 1 ;             //推进器参数方向          
+    static int propeller_Direction_Up_X   = 1 ;
+
+    static int propeller_Direction_Down_Y = 1 ;
+    static int propeller_Direction_Up_Y   = 1 ;
+
+    if(abs(rc->fx)>10&&abs(rc->fy)>10)
+    {
+        PropellerBuffer.leftDown   = propeller_Value*(rc->fx*propeller_Direction_Down_X   + rc->fy*propeller_Direction_Up_Y);
+        PropellerBuffer.rightDown  = propeller_Value*(rc->fx*propeller_Direction_Down_X   + rc->fy*propeller_Direction_Down_Y);
+        PropellerBuffer.leftUp     = propeller_Value*(rc->fx*propeller_Direction_Up_X     + rc->fy*propeller_Direction_Down_Y  );
+        PropellerBuffer.rightUp    = propeller_Value*(rc->fx*propeller_Direction_Up_X     + rc->fy*propeller_Direction_Up_Y  );
+
+    }
+    else
+    {
+        PropellerBuffer.leftDown   = propeller_Value*(powerconpensation->X.power_conpensation*propeller_Direction_Down_X   + powerconpensation->Y.power_conpensation*propeller_Direction_Up_Y);
+        PropellerBuffer.rightDown  = propeller_Value*(powerconpensation->X.power_conpensation*propeller_Direction_Down_X   + powerconpensation->Y.power_conpensation*propeller_Direction_Down_Y);
+        PropellerBuffer.leftUp     = propeller_Value*(powerconpensation->X.power_conpensation*propeller_Direction_Up_X     + powerconpensation->Y.power_conpensation*propeller_Direction_Down_Y  );
+        PropellerBuffer.rightUp    = propeller_Value*(powerconpensation->X.power_conpensation*propeller_Direction_Up_X     + powerconpensation->Y.power_conpensation*propeller_Direction_Up_Y  );
+    }
+    
+        // PropellerBuffer.leftDown   = propeller_Value*((rc->fx-powerconpensation->X.power_conpensation)*propeller_Direction_Down_X + (rc->fy-powerconpensation->Y.power_conpensation)*propeller_Direction_Up_Y);
+        // PropellerBuffer.rightDown  = propeller_Value*((rc->fx-powerconpensation->X.power_conpensation)*propeller_Direction_Down_X + (rc->fy-powerconpensation->Y.power_conpensation)*propeller_Direction_Down_Y);
+        // PropellerBuffer.leftUp     = propeller_Value*((rc->fx-powerconpensation->X.power_conpensation)*propeller_Direction_Down_X + (rc->fy-powerconpensation->Y.power_conpensation)*propeller_Direction_Down_Y  );
+        // PropellerBuffer.rightUp    = propeller_Value*((rc->fx-powerconpensation->X.power_conpensation)*propeller_Direction_Down_X + (rc->fy-powerconpensation->Y.power_conpensation)*propeller_Direction_Up_Y  );
+
+    
+
+    Speed_Buffer(&propeller->leftDown  , &PropellerBuffer.leftDown  ,4);
+    Speed_Buffer(&propeller->rightDown , &PropellerBuffer.rightDown ,4);
+    Speed_Buffer(&propeller->leftUp    , &PropellerBuffer.leftUp    ,4);
+    Speed_Buffer(&propeller->rightUp   , &PropellerBuffer.rightUp   ,4);
+
+
+}
+
+/**
+ * @brief  推进器缓冲
+ * @param  last_value 变化数值指针，缓冲数值指针，变化幅度
+ */
+void Speed_Buffer(short *now_value,short *last_value,short range)
+{		
+		static uint16_t diff_value = 0;
+		diff_value = abs((*last_value) - (*now_value));//暂存差值的绝对值
+		
+		if(diff_value >= range)                         //微分大于预设值，启动缓冲
+		{
+				if(*now_value <= *last_value){
+						*now_value = *last_value - STEP_VLAUE;
+				}
+				else{
+						*now_value = *last_value + STEP_VLAUE;
+				}
+				*last_value = *now_value;	
+		}
+}
+
+
+// void location_keep_pthread()
+// {
+//     pthread_t locationkeep;
+
+//     pthread_create(&locationkeep, NULL,, NULL);
+//     pthread_detach(locationkeep);
+
+// }
+
+/**
+ * @brief  计算路程偏差
+ * @param  last_value 九轴加速度
+ */
+void displacement_current(speech_t *speech, jy901_t *jy901)
+{
+    
+    speech->speech_value_now = speech->speech_value_last + jy901->acc.x ;                    //计算速度
+    speech->displacement = (speech->speech_value_now + speech->speech_value_last)*0.5f;     //计算位移   
+
+}
+
+/**
+ * @brief  动力补偿
+ * @param  speech 
+ */
+void location_keep_control(powerconpensation_t *powerconpensation)
+{
+
+    displacement_current(&powerconpensation->X,&jy901);
+    displacement_current(&powerconpensation->Y,&jy901);
+
+    Total_Controller.Location_X_Control.Expect = 0;                // 定位原点
+    Total_Controller.Location_Y_Control.Expect = 0;               
+
+    Total_Controller.Location_X_Control.FeedBack = powerconpensation->X.displacement; // X加速度反馈(为x轴当前加速度)
+    Total_Controller.Location_Y_Control.FeedBack = powerconpensation->Y.displacement; // Y加速度反馈(为y轴当前加速度)
+
+    powerconpensation->X.power_conpensation = PID_Control(&Total_Controller.Location_X_Control);       // 获取 X轴动力补偿PID控制器输出的控制量
+    powerconpensation->Y.power_conpensation = PID_Control(&Total_Controller.Location_Y_Control);       // 获取 y轴动力补偿PID控制器 输出的控制量
+
+    if(powerconpensation->X.power_conpensation>50)        powerconpensation->X.power_conpensation =  50;
+    else if(powerconpensation->X.power_conpensation< -50) powerconpensation->X.power_conpensation = -50;
+
+    if(powerconpensation->Y.power_conpensation>50)        powerconpensation->Y.power_conpensation =  50;
+    else if(powerconpensation->Y.power_conpensation< -50) powerconpensation->Y.power_conpensation = -50;
+
+}
+
+
+
+
+
