@@ -19,9 +19,9 @@
 #include <wiringPi.h>
 
 static propellerParam_t propellerParam = {
-    .pMax = 1750,  // 正向最大值 单位us
+    .pMax = 2000,  // 正向最大值 单位us
     .med = 1500,   // 中值
-    .nMax = 1250,  // 反向最大值
+    .nMax = 0,     // 反向最大值
     .deadband = 1, // 死区值
 };
 
@@ -126,7 +126,6 @@ void propellerPwm_update(propellerPower_t *propeller)
  */
 void easyPWM_devices_handle(easyPWM_dev_t *easyPWM, uint8_t *action)
 {
-
     switch (*action)
     {
     case 0x01:
@@ -156,26 +155,25 @@ void easyPWM_devices_handle(easyPWM_dev_t *easyPWM, uint8_t *action)
 // TODO 收到 server 数据后，再唤醒pwm线程，pwm线程合并
 void *pwmDevs_thread(void *arg)
 {
-
     propeller_init();
     while (1)
     {
+        /* 测试PWM输出 */
         //sleep(1);
         //pwmWrite(PCA9685_PIN_BASE + 16, calcTicks(2000));
+        /* 测试PWM输出 */
 
-        //propellerPwm_update(&rovdev.propellerPower);
-
-        //easyPWM_devices_handle(&rovdev.yuntai, &action);
-        //easyPWM_devices_handle(&rovdev.light, &action);
+        propellerPwm_update(&rovdev.propellerPower);
+        easyPWM_devices_handle(&rovdev.yuntai, &cmd_data.yuntai);
+        easyPWM_devices_handle(&rovdev.light, &cmd_data.light);
+        delay(1);
     }
 }
 
-// TODO 数据服务器接收到数据才进行停转
 void *robotArm_thread(void *arg)
 {
     while (1)
     {
-
         easyPWM_devices_handle(&rovdev.robot_arm, &cmd_data.arm);
         delay(100);
         rovdev.robot_arm.cur = rovdev.robot_arm.med; // 停转

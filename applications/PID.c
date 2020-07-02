@@ -33,8 +33,7 @@ const float Control_Unit[18][20] = {
     {0, 1, 0, 0, 0, 0, 0, 400, 0, 0, 500, 5.0, 0.300, 0.1, 0, 0, 5000, 1, 1, 1}, //High_Speed;海拔攀升速度   7
     {0, 1, 0, 0, 0, 0, 0, 200, 0, 0, 100, 0.5, 0.000, 0, 0x0, 0, 300, 1, 1, 1},  //High_Position;海拔高度位置 8
 
-    {0, 1, 0, 0, 0, 0, 0, 200, 0, 0, 100, 0.5, 0.000, 0, 0x0, 0, 300, 1, 1, 1},  //location  定位补偿 9
-
+    {0, 1, 0, 0, 0, 0, 0, 200, 0, 0, 100, 0.5, 0.000, 0, 0x0, 0, 300, 1, 1, 1}, //location  定位补偿 9
 
 };
 
@@ -76,8 +75,8 @@ void Total_PID_Init(void)
     PID_Init(&Total_Controller.Yaw_Gyro_Control, Yaw_Gyro_Controler);
     PID_Init(&Total_Controller.High_Position_Control, High_Position_Controler);
     PID_Init(&Total_Controller.High_Speed_Control, High_Speed_Controler);
-    PID_Init(&Total_Controller.Location_X_Control, Location_X_Conrtoler);
-    PID_Init(&Total_Controller.Location_Y_Control, Location_Y_Conrtoler);
+    PID_Init(&Total_Controller.Location_X_Control, Location_X_Controler);
+    PID_Init(&Total_Controller.Location_Y_Control, Location_Y_Controler);
 }
 
 float PID_Control(PID_Controler *Controler)

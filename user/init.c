@@ -6,6 +6,7 @@
 #include "init.h"
 
 #include "../applications/data.h"
+
 #include "../applications/display.h"
 #include "../applications/ioDevices.h"
 #include "../applications/pwmDevices.h"
@@ -15,6 +16,7 @@
 
 #include "datatype.h"
 #include "debug.h"
+#include "dev_control.h"
 
 #include <elog.h>
 #include <stdio.h>
@@ -88,5 +90,6 @@ int system_init(void)
 
     display_thread_init(); // 显示模块线程 初始化
 
+    propeller_thread_init();
     return 0;
 }

@@ -5,7 +5,7 @@
  * @LastEditors: your name
  * @Description: In User Settings Edit
  * @FilePath: \rov-master-master\applications\PID.h
- */ 
+ */
 
 #ifndef __PID_H_
 #define __PID_H_
@@ -60,8 +60,8 @@ typedef struct
     PID_Controler High_Speed_Control; //高度
     PID_Controler High_Position_Control;
 
-    PID_Controler Location_X_Control;  //定位速率补偿
-    PID_Controler Location_Y_Control;         //定位补偿
+    PID_Controler Location_X_Control; //定位速率补偿
+    PID_Controler Location_Y_Control; //定位补偿
 
 } AllControler;
 
@@ -78,8 +78,8 @@ typedef enum
     High_Speed_Controler = 6,
     High_Position_Controler = 7,
 
-    Location_Speech_Conrtoler = 8,
-    Location_Conrtoler = 9
+    Location_X_Controler = 8,
+    Location_Y_Controler = 9
 
 } Controler_Label;
 

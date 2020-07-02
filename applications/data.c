@@ -16,7 +16,12 @@
 #include <unistd.h>
 
 /* 上位机的控制数据 */
-cmd_t cmd_data;
+cmd_t cmd_data = {
+    .move_back = 127, // 上位机摇杆中值为127，因此初值应与其抵消
+    .left_right = 127,
+    .up_down = 127,
+    .rotate = 127,
+};
 
 void rov_all_params_init(void)
 {
