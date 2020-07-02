@@ -1,6 +1,6 @@
 
-/*
- * @Description: ROV状态数据回传与控制命令接收解析，获取 系统状态(CPU、内存、硬盘、网卡网速)
+/**
+ * @desc: ROV状态数据回传与控制命令接收解析，获取 系统状态(CPU、内存、硬盘、网卡网速)
  */
 
 #define LOG_TAG "display"

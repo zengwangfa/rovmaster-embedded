@@ -102,7 +102,7 @@ void copeJY901_data(uint8_t data, jy901_t *jy901)
         return; // 数据不满11个，则返回
 
     /*********** 只有接收满11个字节数据 才会进入以下程序 ************/
-    for (i = 0; i < 10; i++)
+    for (i = 0; i < JY901_PACKET_LENGTH - 1; i++)
         rxCheck += rxBuffer[i]; //校验位累加
 
     if (rxCheck == rxBuffer[JY901_PACKET_LENGTH - 1]) // 判断数据包校验是否正确

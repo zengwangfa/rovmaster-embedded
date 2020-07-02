@@ -15,7 +15,7 @@
 
 - 本项目用到了以下软件包：
   - [WiringNP](https://github.com/friendlyarm/WiringNP) This is a GPIO access library for NanoPi. It is based on the WiringOP for Orange PI which is based on original WiringPi for Raspberry Pi.
-  - [Mjpg-streamer](https://github.com/jacksonliam/mjpg-streamer) mjpg-streamer是一个命令行应用程序，可将JPEG帧从一个或多个输入插件复制到多个输出插件，从一个UVC内核摄像头读取内容，然后将它推送到本地的端口上。
+  - [Mjpg-streamer](https://github.com/jacksonliam/mjpg-streamer) 是一个命令行应用程序，可将JPEG帧从一个或多个输入插件复制到多个输出插件，从一个UVC内核摄像头读取内容，然后将它推送到本地的端口上。
   - [EasyLogger](https://github.com/armink/EasyLogger) 是一款超轻量级(ROM<1.6K, RAM<0.3K)、高性能的 C/C++ 日志库。
 
 # 2. 使用

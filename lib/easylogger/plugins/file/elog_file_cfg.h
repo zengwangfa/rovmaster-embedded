@@ -30,7 +30,7 @@
 #define _ELOG_FILE_CFG_H_
 
 /* EasyLogger file log plugin's using file name */
-#define ELOG_FILE_NAME "/home/pi/rov-master/vehicle.log"
+#define ELOG_FILE_NAME "/home/pi/rovmaster-embedded/vehicle.log"
 
 /* EasyLogger file log plugin's using file max size */
 #define ELOG_FILE_MAX_SIZE (10 * 1024 * 1024)

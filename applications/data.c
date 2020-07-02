@@ -1,5 +1,5 @@
-/*
- * @Description: ROV状态数据回传与控制命令接收解析
+/**
+ * @desc: ROV状态数据回传与控制命令接收解析
  */
 
 #define LOG_TAG "data"

@@ -7,8 +7,8 @@
 
 #include <stdint.h> // 其中定义数据类型(eg. uint8...)
 
-#define ROV_MASTER_VERSION "1.0.0"                        // 程序版本
-#define ROV_CONFIG_FILE_PATH "/home/pi/rov-master/params" // 参数文件路径
+#define ROV_MASTER_VERSION "1.0.0"                                // 程序版本
+#define ROV_CONFIG_FILE_PATH "/home/pi/rovmaster-embedded/params" // 参数文件路径
 
 // 简单 PWM 设备对应 PCA9685 PWM输出通道(接线板PWM口定义)
 #define LIGHT_CHANNEL 10

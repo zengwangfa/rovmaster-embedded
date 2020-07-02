@@ -1,5 +1,5 @@
-/*
- * @Description: 获取 系统状态(CPU、内存、硬盘、网卡网速)
+/**
+ * @desc: 获取 系统状态(CPU、内存、硬盘、网卡网速)
  */
 
 #define LOG_TAG "data"

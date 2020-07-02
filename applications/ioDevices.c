@@ -1,5 +1,5 @@
-/*
- * @Description: io设备线程(RGB、KEY、BUZZER)
+/**
+ * @desc: io设备线程(RGB、KEY、BUZZER)
  */
 
 #define LOG_TAG "ioDevs"
