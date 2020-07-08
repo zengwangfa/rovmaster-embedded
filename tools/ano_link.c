@@ -204,6 +204,13 @@ void ANO_DT_Data_Receive_Anl(uint8_t *data_buf, uint8_t num)
         Total_Controller.High_Position_Control.Kp = 0.001 * ((int16_t)(*(data_buf + 10) << 8) | *(data_buf + 11));
         Total_Controller.High_Position_Control.Ki = 0.001 * ((int16_t)(*(data_buf + 12) << 8) | *(data_buf + 13));
         Total_Controller.High_Position_Control.Kd = 0.001 * ((int16_t)(*(data_buf + 14) << 8) | *(data_buf + 15));
+
+        Total_Controller.Location_X_Control.Kp = 0.001 * ((int16_t)(*(data_buf + 16) << 8) | *(data_buf + 17));
+        Total_Controller.Location_X_Control.Ki = 0.001 * ((int16_t)(*(data_buf + 18) << 8) | *(data_buf + 19));
+        Total_Controller.Location_X_Control.Kd = 0.001 * ((int16_t)(*(data_buf + 20) << 8) | *(data_buf + 21));
+        Total_Controller.Location_Y_Control.Kp = 0.001 * ((int16_t)(*(data_buf + 22) << 8) | *(data_buf + 23));
+        Total_Controller.Location_Y_Control.Ki = 0.001 * ((int16_t)(*(data_buf + 24) << 8) | *(data_buf + 25));
+        Total_Controller.Location_Y_Control.Kd = 0.001 * ((int16_t)(*(data_buf + 26) << 8) | *(data_buf + 27));
         ANO_DT_Send_Check(*(data_buf + 2), sum);
     }
     if (*(data_buf + 2) == 0x13) //½ÓÊÕPID4

@@ -1,3 +1,11 @@
+/*
+ * @Author: your name
+ * @Date: 2020-07-03 15:23:49
+ * @LastEditTime: 2020-07-08 10:31:36
+ * @LastEditors: your name
+ * @Description: In User Settings Edit
+ * @FilePath: \rovmaster-embedded\applications\server.h
+ */ 
 
 
 #ifndef __SERVER_H_

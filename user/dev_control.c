@@ -1,9 +1,18 @@
+/*
+ * @Author: your name
+ * @Date: 2020-07-03 15:23:51
+ * @LastEditTime: 2020-07-08 19:35:18
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: \rovmaster-embedded\user\dev_control.c
+ */ 
 /**
  * @desc: 设备控制程序
  */
 #define LOG_TAG "dev_ctrl"
 
 #include "../applications/data.h"
+
 
 #include "control.h"
 #include "datatype.h"
@@ -15,6 +24,7 @@
 #include <stdlib.h>
 
 rockerInfo_t rocker;
+extern propellerPower_t Propellerconposent;
 
 void *propeller_thread(void *arg)
 {
@@ -22,7 +32,8 @@ void *propeller_thread(void *arg)
     {
         sixAixs_get_rocker_params(&rocker, &cmd_data);      // 获取摇杆参数
         rov_depth_control(&rocker, &rovdev.propellerPower); //深度控制
-        sixAixs_horizontal_control(&rocker, &rovdev.propellerPower);
+        propeller_conposent_horizontal(&rocker, &Propellerconposent);
+        sixAixs_horizontal_control(&rocker, &rovdev.propellerPower);   //6轴运动控制
         delay(20);
     }
 }

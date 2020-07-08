@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-06-25 14:43:23
- * @LastEditTime: 2020-06-30 21:13:25
+ * @LastEditTime: 2020-07-08 16:37:37
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \rov-master-master\user\control.h
@@ -44,7 +44,12 @@ void sixAixs_get_rocker_params(rockerInfo_t *rc, cmd_t *cmd); // 获取摇杆参
 
 void rov_depth_control(rockerInfo_t *rc, propellerPower_t *propeller);
 
+void Speed_Buffer(short *now_value, short *last_value, short range);//缓冲器
+
 void sixAixs_horizontal_control(rockerInfo_t *rc, propellerPower_t *propeller); //六轴控制函数
 
+void propeller_conposent_horizontal(rockerInfo_t *rc, propellerPower_t *Propellerconposent); //水平推进器死区补偿
+
+void propeller_conposent_depth1(rockerInfo_t *rc, propellerPower_t *Propellerconposent) ;   //垂推死区补偿
 
 #endif

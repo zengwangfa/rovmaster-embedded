@@ -1,8 +1,17 @@
+/*
+ * @Author: your name
+ * @Date: 2020-07-03 15:23:49
+ * @LastEditTime: 2020-07-07 19:51:05
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: \rovmaster-embedded\applications\server.c
+ */ 
 /**
  * @desc:  数据链路服务器，用于传输与接收数据
  */
 
 #define LOG_TAG "server"
+#include"../user/datatype.h"
 
 #include "server.h"
 #include "../drivers/sys_status.h"
@@ -87,6 +96,12 @@ void *recv_thread(void *arg)
             return NULL;
         }
         print_hex_data("recv", recv_buff, RECV_DATA_LEN);
+        printf("propeller->leftUp %d \n",rovdev.propellerPower.leftUp);
+        printf("propeller->righUp  %d \n",rovdev.propellerPower.rightUp);
+        printf("propeller->leftDown %d \n",rovdev.propellerPower.leftDown);
+        printf("propeller->rightDown %d \n",rovdev.propellerPower.rightDown);
+        printf("propeller->leftMiddle %d \n",rovdev.propellerPower.leftMiddle);
+        printf("propeller->rightMiddle %d \n",rovdev.propellerPower.rightMiddle); 
         /* 接收遥控数据解析 */
         remote_control_data_analysis(recv_buff, &cmd_data);
     }
@@ -155,11 +170,13 @@ void *server_thread(void *arg)
         if ((client_sock = accept(server_sock, (struct sockaddr *)&clientAddr, &addrLen)) < 0)
         {
             log_e("accept socket error:%s(errorno:%d)", strerror(errno), errno);
+
             continue;
         }
         // 获取客户端IP地址
         strncpy(clientip, inet_ntoa(clientAddr.sin_addr), sizeof(clientip));
         // 打印客户端连接次数及IP地址
+        
         log_i("conneted success from clinet [NO.%d] IP: [%s]", ++clientCnt, clientip);
 
         pthread_create(&send_tid, NULL, send_thread, clientip);

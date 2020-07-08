@@ -1,3 +1,11 @@
+/*
+ * @Author: your name
+ * @Date: 2020-07-03 15:23:49
+ * @LastEditTime: 2020-07-06 16:00:56
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: \rovmaster-embedded\applications\data.h
+ */ 
 #ifndef __RC_DATA_H_
 #define __RC_DATA_H_
 
@@ -8,6 +16,14 @@
  * 包头：2, 数据长度位: 1, 包体：16, 校验字：1
 */
 #define RECV_DATA_LEN 20
+
+
+/*
+ * 定义锁定，解锁模式
+ * 锁定0x01，解锁0x02
+*/
+#define CONTROL_LOCK  0x01              //锁定
+#define CONTROL_UNLOCK  0x02            //解锁
 
 /*
  * 返回数据包长度【包含包头、长度位、校验位】

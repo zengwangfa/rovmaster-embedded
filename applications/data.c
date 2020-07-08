@@ -92,6 +92,9 @@ void read_rov_all_params(void)
     read_pid_from_file(fp, name, &Total_Controller.High_Position_Control);
     read_pid_from_file(fp, name, &Total_Controller.High_Speed_Control);
 
+    read_pid_from_file(fp, name, &Total_Controller.Location_X_Control);
+    read_pid_from_file(fp, name, &Total_Controller.Location_Y_Control);
+
     fgets(buf, sizeof(buf), fp); // 读取设备参数描述信息(相当于跳过这一行)
 
     read_pwmDev_params_from_file(fp, name, &rovdev.light);
@@ -127,6 +130,9 @@ void write_rov_all_params(void)
 
     write_pid_to_file(fp, "high_positi", &Total_Controller.High_Position_Control);
     write_pid_to_file(fp, "high_speed ", &Total_Controller.High_Speed_Control);
+
+    write_pid_to_file(fp, "speech_x   ", &Total_Controller.Location_X_Control);
+    write_pid_to_file(fp, "speech_y   ", &Total_Controller.Location_Y_Control);
 
     fprintf(fp, "dev\tpMax\tnMax\tspeed\n"); // 写入 PWM设备参数信息
 

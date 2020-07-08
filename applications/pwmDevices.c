@@ -84,7 +84,7 @@ void propeller_init(void) //这边都需要经过限幅在给定  原先为2000-
     int i;
     // 给定最高转速信号
     for (i = 0; i < 6; i++)
-        pwmWrite(PCA9685_PIN_BASE + i, calcTicks(PROPELLER_POWER_P_MAX));
+        pwmWrite(PCA9685_PIN_BASE + i, calcTicks(PROPELLER_POWER_STOP));
 
     sleep(2); // 2s
 
