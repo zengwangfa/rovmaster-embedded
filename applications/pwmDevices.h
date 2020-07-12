@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-07-03 15:23:49
- * @LastEditTime: 2020-07-08 14:05:42
+ * @LastEditTime: 2020-07-10 14:21:12
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \rovmaster-embedded\applications\pwmDevices.h
@@ -13,12 +13,12 @@
 
 #include "../user/config.h"
 
-#define HERTZ 50             // PWM频率
+#define HERTZ 50          // PWM频率
 #define MAX_PWM 4096         // 满占空比数值
 #define PCA9685_PIN_BASE 300 // PCA9685虚拟引脚
 
 #define PROPELLER_POWER_P_MAX 2000 // 正向最大值
-#define PROPELLER_POWER_STOP 1470  // 停转信号值
+#define PROPELLER_POWER_STOP 1500  // 停转信号值
 #define PROPELLER_POWER_N_MAX 1000 // 反向最大值
 
 /* 推进器参数 */

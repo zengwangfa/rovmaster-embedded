@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-07-03 15:23:51
- * @LastEditTime: 2020-07-08 19:35:18
+ * @LastEditTime: 2020-07-12 09:57:10
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \rovmaster-embedded\user\dev_control.c
@@ -23,8 +23,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-rockerInfo_t rocker;
-extern propellerPower_t Propellerconposent;
+extern rockerInfo_t rocker;
 
 void *propeller_thread(void *arg)
 {
@@ -32,18 +31,33 @@ void *propeller_thread(void *arg)
     {
         sixAixs_get_rocker_params(&rocker, &cmd_data);      // 获取摇杆参数
         rov_depth_control(&rocker, &rovdev.propellerPower); //深度控制
-        propeller_conposent_horizontal(&rocker, &Propellerconposent);
         sixAixs_horizontal_control(&rocker, &rovdev.propellerPower);   //6轴运动控制
         delay(20);
     }
 }
 
+void *test_printf(void *arg)
+{
+        printf("control->state %d \n",cmd_data.all_lock);
+        printf("propeller->leftUp %d \n",rovdev.propellerPower.leftUp);
+        printf("propeller->righUp  %d \n",rovdev.propellerPower.rightUp);
+        printf("propeller->leftDown %d \n",rovdev.propellerPower.leftDown);
+        printf("propeller->rightDown %d \n",rovdev.propellerPower.rightDown);
+        printf("propeller->leftMiddle %d \n",rovdev.propellerPower.leftMiddle);
+        printf("propeller->rightMiddle %d \n",rovdev.propellerPower.rightMiddle); 
+        sleep(1);
+}
+
 int propeller_thread_init(void)
 {
     pthread_t propeller_tid;
+    pthread_t propeller_tid1;
 
     pthread_create(&propeller_tid, NULL, &propeller_thread, NULL);
     pthread_detach(propeller_tid);
+
+    pthread_create(&propeller_tid1, NULL, &test_printf, NULL);
+    pthread_detach(propeller_tid1);
 
     log_i("propeller controller init");
     return 0;

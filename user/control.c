@@ -21,7 +21,10 @@
 
 propellerPower_t PropellerBuffer = {0, 0, 0, 0, 0, 0}; //推进器缓冲区；
 propellerPower_t Propellerconposent = {0, 0, 0, 0, 0, 0};  //推进器补偿
-int location_keep_timer = 0;
+rockerInfo_t rocker;
+extern cmd_t cmd_data;
+
+
 
 void fourAixs_get_rocker_params(rockerInfo_t *rc, cmd_t *cmd) // 获取摇杆参数值
 {
@@ -88,23 +91,28 @@ void rov_depth_control(rockerInfo_t *rc, propellerPower_t *propeller)
     static float expect_depth;
     static float vertical_force; // 垂直方向上的推力输出大小
 
-    if (abs(rc->fz) < 10) // 当摇杆接近不动时，PID进行定深
-    {
-        Total_Controller.High_Position_Control.Expect = expect_depth;                // 期望深度(为上次摇杆调节到的深度)
-        Total_Controller.High_Position_Control.FeedBack = rovInfo.depthSensor.depth; // 深度反馈(为传感器当前深度)
-        vertical_force = PID_Control(&Total_Controller.High_Position_Control);       // 获取 高度位置PID控制器 输出的控制量
+    propeller_conposent_depth1(&rocker, &Propellerconposent);// 死区补偿
 
-        propeller->leftMiddle  =  vertical_force;   // 正反桨
-        propeller->rightMiddle = -vertical_force; // 输出为负值
-    }
-    else // 当摇杆动时
+    if (abs(rc->fz) > 5 && CONTROL_UNLOCK == cmd_data.all_lock) // 当摇杆动时且处于解锁状态
     {
         expect_depth = rovInfo.depthSensor.depth; // 期望深度为当前深度
         PropellerBuffer.leftMiddle  =  rc->fz * 2;       // 正反桨
         PropellerBuffer.rightMiddle = -rc->fz * 2;     // 输出为负值
-        Speed_Buffer(&propeller->leftMiddle ,   &PropellerBuffer.leftMiddle,    4);
-        Speed_Buffer(&propeller->rightMiddle,   &PropellerBuffer.rightMiddle,   4);
+        
     }
+    else // 当摇杆接近不动时，PID进行定深
+    {
+        
+        Total_Controller.High_Position_Control.Expect = expect_depth;                // 期望深度(为上次摇杆调节到的深度)
+        Total_Controller.High_Position_Control.FeedBack = rovInfo.depthSensor.depth; // 深度反馈(为传感器当前深度)
+        vertical_force = PID_Control(&Total_Controller.High_Position_Control);       // 获取 高度位置PID控制器 输出的控制量
+
+        PropellerBuffer.leftMiddle  =  vertical_force;   // 正反桨
+        PropellerBuffer.rightMiddle = -vertical_force; // 输出为负值
+    }
+
+    Speed_Buffer(&propeller->leftMiddle ,   &PropellerBuffer.leftMiddle,    4);
+    Speed_Buffer(&propeller->rightMiddle,   &PropellerBuffer.rightMiddle,   4);
 
 }
 
@@ -192,26 +200,21 @@ void sixAixs_horizontal_control(rockerInfo_t *rc, propellerPower_t *propeller)
     static int propeller_Direction_Down_Y = -1;
     static int propeller_Direction_Up_Y   =  1;
 
-    if ((abs(rc->fx) < 10 && abs(rc->fy) < 10))      //当遥感值较小或锁定时，推进器全部失能，后期可以修改为自稳
+    propeller_conposent_horizontal(&rocker, &Propellerconposent);  //死区补偿
+
+    if ((abs(rc->fx) > 10 || abs(rc->fy) > 10) && CONTROL_UNLOCK == cmd_data.all_lock)      //当遥感值较小或锁定时，推进器全部失能，后期可以修改为自稳
+    {
+        PropellerBuffer.leftDown  = propeller_Value * (rc->fx * propeller_Direction_Down_X + rc->fy * propeller_Direction_Down_Y + Propellerconposent.leftDown);     //根据遥感获取动力0~254
+        PropellerBuffer.rightDown = propeller_Value * (rc->fx * propeller_Direction_Down_X + rc->fy * propeller_Direction_Up_Y   + Propellerconposent.rightDown);
+        PropellerBuffer.leftUp    = propeller_Value * (rc->fx * propeller_Direction_Up_X   + rc->fy * propeller_Direction_Down_Y + Propellerconposent.leftUp);
+        PropellerBuffer.rightUp   = propeller_Value * (rc->fx * propeller_Direction_Up_X   + rc->fy * propeller_Direction_Up_Y   + Propellerconposent.rightUp);
+    }
+    else
     {
         PropellerBuffer.leftDown  = 0;
         PropellerBuffer.rightDown = 0;
         PropellerBuffer.leftUp    = 0;
         PropellerBuffer.rightUp   = 0;
-    }
-    // else if(abs(rc->yaw)>5)
-    // {
-    //     PropellerBuffer.leftDown  =  propeller_Value * rc->yaw;     //根据遥感获取动力0~254
-    //     PropellerBuffer.rightDown = -propeller_Value * rc->yaw;
-    //     PropellerBuffer.leftUp    = -propeller_Value * rc->yaw;
-    //     PropellerBuffer.rightUp   =  propeller_Value * rc->yaw;
-    // }
-    else
-    {
-        PropellerBuffer.leftDown  = propeller_Value * (rc->fx * propeller_Direction_Down_X + rc->fy * propeller_Direction_Down_Y + Propellerconposent.leftUp);     //根据遥感获取动力0~254
-        PropellerBuffer.rightDown = propeller_Value * (rc->fx * propeller_Direction_Down_X + rc->fy * propeller_Direction_Up_Y   + Propellerconposent.rightDown);
-        PropellerBuffer.leftUp    = propeller_Value * (rc->fx * propeller_Direction_Up_X   + rc->fy * propeller_Direction_Down_Y + Propellerconposent.leftUp);
-        PropellerBuffer.rightUp   = propeller_Value * (rc->fx * propeller_Direction_Up_X   + rc->fy * propeller_Direction_Up_Y   + Propellerconposent.rightUp);
     }
 
     Speed_Buffer(&propeller->leftDown,  &PropellerBuffer.leftDown,  4);    //缓冲器
@@ -225,32 +228,32 @@ void propeller_conposent_horizontal(rockerInfo_t *rc, propellerPower_t *Propelle
 {
     if(rc->fx >abs(rc->fy))
     {
-        Propellerconposent->leftUp    = -34;
-        Propellerconposent->rightUp   = -33;
-        Propellerconposent->leftDown  =  25;
-        Propellerconposent->rightDown =  33;
+        Propellerconposent->leftUp    = -45;
+        Propellerconposent->rightUp   = -45;
+        Propellerconposent->leftDown  =  20;
+        Propellerconposent->rightDown =  45;
     }
     else if(rc->fx < abs(rc->fy))
     {
-        Propellerconposent->leftUp    =  34;
-        Propellerconposent->rightUp   =  20;
-        Propellerconposent->leftDown  = -17;
-        Propellerconposent->rightDown = -35;
+        Propellerconposent->leftUp    =  45;
+        Propellerconposent->rightUp   =  7;
+        Propellerconposent->leftDown  = -25;
+        Propellerconposent->rightDown = -45;
     }
     else if(rc->fy > abs(rc->fx))
     {
-        Propellerconposent->leftUp    = -34;
-        Propellerconposent->rightUp   =  20;
-        Propellerconposent->leftDown  = -17;
-        Propellerconposent->rightDown =  33;
+        Propellerconposent->leftUp    = -45;
+        Propellerconposent->rightUp   =  7;
+        Propellerconposent->leftDown  = -25;
+        Propellerconposent->rightDown =  45;
 
     }
     else if(rc->fy < abs(rc->fx))
     {
-        Propellerconposent->leftUp    =  34;
-        Propellerconposent->rightUp   = -33;
-        Propellerconposent->leftDown  =  25;
-        Propellerconposent->rightDown = -35;
+        Propellerconposent->leftUp    =  45;
+        Propellerconposent->rightUp   = -45;
+        Propellerconposent->leftDown  =  20;
+        Propellerconposent->rightDown = -45;
 
     }
 
@@ -258,16 +261,16 @@ void propeller_conposent_horizontal(rockerInfo_t *rc, propellerPower_t *Propelle
 
 void propeller_conposent_depth1(rockerInfo_t *rc, propellerPower_t *Propellerconposent)
 {
-    if(rc->fy >= 2)
+    if(rc->fz >= 2)
     {
-        Propellerconposent->leftMiddle    =  20;
-        Propellerconposent->rightMiddle   = -40;
+        Propellerconposent->leftMiddle    =  19;
+        Propellerconposent->rightMiddle   = -45;
 
     }
-    else if(rc->fy <=-2)
+    else if(rc->fz <=-2)
     {
-        Propellerconposent->leftMiddle    = -40;
-        Propellerconposent->rightMiddle   =  40;
+        Propellerconposent->leftMiddle    = -29;
+        Propellerconposent->rightMiddle   =  15;
     }
 
 }
@@ -303,6 +306,7 @@ void location_keep_control(powerconpensation_t *powerconpensation)
     else if (powerconpensation->Y.power_conpensation < -50)
         powerconpensation->Y.power_conpensation = -50;
 }
+
 
 
 

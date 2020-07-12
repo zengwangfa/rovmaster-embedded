@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-07-03 15:23:49
- * @LastEditTime: 2020-07-07 19:51:05
+ * @LastEditTime: 2020-07-12 09:52:06
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \rovmaster-embedded\applications\server.c
@@ -96,12 +96,13 @@ void *recv_thread(void *arg)
             return NULL;
         }
         print_hex_data("recv", recv_buff, RECV_DATA_LEN);
-        printf("propeller->leftUp %d \n",rovdev.propellerPower.leftUp);
-        printf("propeller->righUp  %d \n",rovdev.propellerPower.rightUp);
-        printf("propeller->leftDown %d \n",rovdev.propellerPower.leftDown);
-        printf("propeller->rightDown %d \n",rovdev.propellerPower.rightDown);
-        printf("propeller->leftMiddle %d \n",rovdev.propellerPower.leftMiddle);
-        printf("propeller->rightMiddle %d \n",rovdev.propellerPower.rightMiddle); 
+        // printf("control->state %d \n",cmd_data.all_lock);
+        // printf("propeller->leftUp %d \n",rovdev.propellerPower.leftUp);
+        // printf("propeller->righUp  %d \n",rovdev.propellerPower.rightUp);
+        // printf("propeller->leftDown %d \n",rovdev.propellerPower.leftDown);
+        // printf("propeller->rightDown %d \n",rovdev.propellerPower.rightDown);
+        // printf("propeller->leftMiddle %d \n",rovdev.propellerPower.leftMiddle);
+        // printf("propeller->rightMiddle %d \n",rovdev.propellerPower.rightMiddle); 
         /* 接收遥控数据解析 */
         remote_control_data_analysis(recv_buff, &cmd_data);
     }
