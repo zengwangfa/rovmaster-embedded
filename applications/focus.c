@@ -1,140 +1,129 @@
-/*
- *      Notes:  变焦摄像头设备(控制通信)
+/**
+ * @desc: 变焦镜头控制
  */
+#define LOG_TAG "focus"
 
 #include "focus.h"
-#include <elog.h>
 #include "data.h"
-// #include "Control.h"
+#include <elog.h>
 
-uint8_t focus_data_ok = 0;
+#include <pthread.h>
+#include <wiringPi.h>
+#include <wiringSerial.h>
 
-uint8_t addFocus_Data[6] = {0xAA, 0x55, 0x02, 0x01, 0x00, 0x02}; //放大
-uint8_t minFocus_Data[6] = {0xAA, 0x55, 0x02, 0x02, 0x00, 0x03}; //缩小
-
-uint8_t addZoom_Data[6] = {0xAA, 0x55, 0x02, 0x00, 0x01, 0x02}; //聚焦
-uint8_t minZoom_Data[6] = {0xAA, 0x55, 0x02, 0x00, 0x02, 0x03}; //放焦
-
-uint8_t Camera_Clear_Data[6] = {0xAA, 0x55, 0x02, 0x88, 0x88, 0x11}; //恢复初始值
-uint8_t Camera_Stop_Data[6] = {0xAA, 0x55, 0x02, 0x00, 0x00, 0x01};  //停止
-/*----------------------- Function Implement --------------------------------*/
-uint8_t focus_data[10] = {0};
+static int fd;
+static int is_ok;
+/* 返回数据包，包头位固定为：0xAA,0x55;  数据长度位：0x02 */
+static uint8_t camera_control_data[CAMERA_CONTROL_DATA_LEN] = {0xAA, 0x55, 0x02};
 
 /**
-  * @brief  Focus_Zoom_Camera(摄像头变焦、放大)
-  * @param  控制字符数据action [0x01聚焦、0x02放焦、0x11放大、0x12缩小]
-  * @retval None
-  * @notice 
-  */
-void Focus_Zoom_Camera_Control(uint8_t *action)
+ * @brief  变焦镜头控制
+ * @param  action 控制指令
+ * @notice 0x01表示放大，0x02表示缩小， 0x11表示拉近，0x12表示拉远，0x00表示不动作（默认）
+ */
+void focus_zoom_camera_control(uint8_t *action)
 {
-	/*
-	switch (*action)
-	{
-	case 0x01:
-		rt_device_write(focus_uart_device, 0, addFocus_Data, 6);
-		break;
-	case 0x02:
-		rt_device_write(focus_uart_device, 0, minFocus_Data, 6);
-		break;
-	case 0x11:
-		rt_device_write(focus_uart_device, 0, addZoom_Data, 6);
-		break;
-	case 0x12:
-		rt_device_write(focus_uart_device, 0, minZoom_Data, 6);
-		break;
-	case 0x88:
-		rt_device_write(focus_uart_device, 0, Camera_Clear_Data, 6);
-		break; //恢复初始值
-	default:
-		break; //可能为错误命令 停止控制
-	}
-	*action = 0x00;
-	*/
+    if (*action)
+    {
+        switch (*action)
+        {
+        case FOCUS_MAGNIFY: // 聚焦放大
+            camera_control_data[3] = 0x01;
+            camera_control_data[4] = 0x00;
+            break;
+        case FOCUS_LESSEN: // 聚焦缩小
+            camera_control_data[3] = 0x02;
+            camera_control_data[4] = 0x00;
+            break;
+        case ZOOM_IN: // 变焦拉近
+            camera_control_data[3] = 0x00;
+            camera_control_data[4] = 0x01;
+            break;
+        case ZOOM_OUT: // 变焦拉远
+            camera_control_data[3] = 0x00;
+            camera_control_data[4] = 0x02;
+            break;
+        default: // 设定变焦步进角度
+            camera_control_data[3] = *action;
+            camera_control_data[4] = *action;
+            break;
+        }
+        // 计算校验位
+        camera_control_data[5] = calculate_check_sum(camera_control_data, sizeof(camera_control_data) - 1);
+        for (int i = 0; i < 6; i++)
+            printf("%#x ", camera_control_data[i]);
+        write(fd, camera_control_data, sizeof(camera_control_data));
+        *action = 0x00;
+    }
 }
 
 /**
-  * @brief  Camera_Focus_Data_Analysis(变焦摄像头返回数据解析)
-  * @param  控制字符数据 uint8_t Data
-  * @retval None
-  * @notice 从第四个字节开始为控制字符
-  */
-void Camera_Focus_Data_Analysis(uint8_t Data) //控制数据解析
+ * @brief  接收变焦控制器反馈字符串线程(校验对变焦控制器控制是否成功)
+ * @notice 变焦控制器初始化成功以及接受到指令后都会返回"ok"
+ * 		   (因此可以通过向变焦控制器发送 设定步进角度 校验其是否存在及可控)
+ */
+void *focus_camera_receive_thread(void *arg)
 {
-	/*
-	static uint8_t RxCheck = 0; //尾校验字
-	static uint8_t RxCount = 0; //接收计数
-	static uint8_t i = 0;		  //
+    char rxBuffer[2];
 
-	focus_data[RxCount++] = Data; //将收到的数据存入缓冲区中
-
-	if (focus_data[0] == 0xAA)
-	{ //接收到包头0xAA
-		if (RxCount > 3)
-		{
-			if (focus_data[1] == 0x55)
-			{ //接收到包头0x55
-				if (RxCount >= focus_data[2] + 4)
-				{ //接收到数据包长度位，开始判断什么时候开始计算校验
-					for (i = 0; i <= (RxCount - 2); i++)
-					{ //累加和校验
-						RxCheck += focus_data[i];
-					}
-					if (RxCheck == focus_data[RxCount - 1])
-					{
-						focus_data_ok = 1; //接收数据包成功
-					}
-					else
-					{
-						focus_data_ok = 0;
-					}
-
-					RxCheck = 0; //接收完成清零
-					RxCount = 0;
-				}
-			}
-			else
-			{
-				focus_data_ok = 0;
-				RxCount = 0;
-				return;
-			} //接收不成功清零
-		}
-	}
-	else
-	{
-		focus_data_ok = 0;
-		RxCount = 0;
-		return;
-	} //接收不成功清零
-
-	if (focus_data_ok)
-	{ // 提示字符 标志计算
-		if (focus_data[3] == 0xFF)
-		{
-			device_hint_flag |= 0x04;
-		}
-		else
-		{
-			device_hint_flag &= 0xFB;
-		}
-		if (focus_data[4] == 0xFF)
-		{
-			device_hint_flag |= 0x08;
-		}
-		else
-		{
-			device_hint_flag &= 0xF7;
-		}
-	}
-	*/
+    while (1)
+    {
+        delay(10);
+        while (serialDataAvail(fd))
+        {
+            read(fd, rxBuffer, 2); // 获取是否有反馈
+            if (!strcmp(rxBuffer, "ok"))
+                is_ok = 1;
+            memset(rxBuffer, 0, 2); // 清空
+        }
+    }
+    return NULL;
 }
 
-/* 设置 恢复初始值 */
-void focus_camera_clear(void)
+/**
+ * @brief  校验对变焦控制器控制是否成功
+ * @param  数据字符
+ * @notice 变焦控制器初始化成功以及接受到指令后都会返回"ok"
+ * 		   (因此可以通过向变焦控制器发送 设定步进角度 校验其是否存在及可控)
+ * @retval 0代表成功，-1为失败
+ */
+void *focus_camera_thread(void *arg)
 {
-	/*
-	rt_device_write(focus_uart_device, 0, Camera_Clear_Data, 6);
-	log_i("focus_camera_clear... ");
-	*/
+    while (1)
+    {
+        focus_zoom_camera_control(&cmd_data.camera);
+        delay(10);
+    }
+}
+
+int focus_camera_thread_init(void)
+{
+    pthread_t focus_tid;
+    pthread_t focus_recv_tid;
+    uint8_t focus_cam_step_angle = 10; // 步进角度为10，即变焦控制器每接收到一次指令转10个单位，一个周期为360
+
+    // 先创建用于接收反馈的线程，用于后面初始化检验
+    pthread_create(&focus_recv_tid, NULL, &focus_camera_receive_thread, NULL);
+    pthread_detach(focus_recv_tid);
+
+    // 小于0代表无法找到该uart接口，输入命令 sudo npi-config 使能该uart接口
+    fd = serialOpen(FOCUS_CAMERA_UART_DEV, UART_BAUD_115200);
+    if (fd < 0)
+    {
+        log_e("focus camera uart init failed");
+        return -1;
+    }
+    focus_zoom_camera_control(&focus_cam_step_angle); // 发送设定步进角度 变焦控制器是否存在
+    delay(1000);                                      // 等待反馈
+    if (is_ok)
+    {
+        is_ok = 0; //清零
+        log_i("focus camera init");
+        pthread_create(&focus_tid, NULL, &focus_camera_thread, NULL);
+        pthread_detach(focus_tid);
+    }
+    else
+        log_e("focus camera init failed");
+
+    return 0;
 }
