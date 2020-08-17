@@ -104,7 +104,7 @@ struct STime
 
 struct SAcc
 {
-    short a[3];
+    short a[6];
     short T;
 };
 struct SGyro
@@ -114,7 +114,7 @@ struct SGyro
 };
 struct SAngle
 {
-    short angle[3];
+    short angle[6];
     short T;
 };
 struct SMag

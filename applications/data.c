@@ -34,6 +34,7 @@ void rov_all_params_init(void)
 	*/
     if (0 == access(ROV_CONFIG_FILE_PATH, F_OK)) // 0:exist
     {
+        Total_PID_Init(); 
         read_rov_all_params();
         log_i("read rov params success...");
     }
@@ -141,6 +142,7 @@ void write_rov_all_params(void)
     write_pwmDev_params_to_file(fp, &rovdev.light);
     write_pwmDev_params_to_file(fp, &rovdev.yuntai);
     write_pwmDev_params_to_file(fp, &rovdev.robot_arm);
+   // write_pwmDev_params_to_file(fp, &rovdev.propellerPower);
 
     fclose(fp);
 }

@@ -37,7 +37,7 @@ int calcTicks(int16_t duty)
     static float cycleMs = 1000.0f / HERTZ; // 总周期20ms
     impulseMs = duty / 1000.0f;             // 单位转换为ms
 
-    return (int)((impulseMs / cycleMs * MAX_PWM +6)/1.02);     // 当50hz时  校验-2 /1.005
+    return (int)((impulseMs / cycleMs * MAX_PWM +2)/1.013);     // 当50hz时  校验-2 /1.005
 }
 
 /**

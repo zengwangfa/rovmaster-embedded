@@ -96,14 +96,6 @@ void *recv_thread(void *arg)
             return NULL;
         }
         print_hex_data("recv", recv_buff, RECV_DATA_LEN);
-        // printf("control->state %d \n",cmd_data.all_lock);
-        // printf("propeller->leftUp %d \n",rovdev.propellerPower.leftUp);
-        // printf("propeller->righUp  %d \n",rovdev.propellerPower.rightUp);
-        // printf("propeller->leftDown %d \n",rovdev.propellerPower.leftDown);
-        // printf("propeller->rightDown %d \n",rovdev.propellerPower.rightDown);
-        // printf("propeller->leftMiddle %d \n",rovdev.propellerPower.leftMiddle);
-        // printf("propeller->rightMiddle %d \n",rovdev.propellerPower.rightMiddle); 
-        /* 接收遥控数据解析 */
         remote_control_data_analysis(recv_buff, &cmd_data);
     }
     return NULL;

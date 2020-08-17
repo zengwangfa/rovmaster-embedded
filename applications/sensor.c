@@ -57,6 +57,7 @@ void *adc_thread(void *arg)
 void *jy901_thread(void *arg)
 {
     static uint8_t data;
+    
     // 文件描述符由 创建线程参数 arg
     int fd = *(int *)arg;
     while (1)
@@ -165,7 +166,7 @@ int sensor_thread_init(void)
     if (fd < 0)
         ERROR_LOG(fd, "jy901");
     else
-    {
+    {   
         log_i("jy901   init");
         pthread_create(&jy901_tid, NULL, jy901_thread, &fd);
         pthread_detach(jy901_tid);

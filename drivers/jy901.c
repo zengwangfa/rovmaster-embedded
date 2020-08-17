@@ -32,15 +32,18 @@ void jy901Reset(int fd)
   */
 static void jy901_convert(uint8_t which, jy901_t *jy901)
 {
-    // 选择数据包
+    // 选择数据包 
     switch (which)
     {
     case 0x51:
     {
-        jy901->acc.x = (float)jy901_raw.stcAcc.a[0] / 2048; // 32768*16
-        jy901->acc.y = (float)jy901_raw.stcAcc.a[1] / 2048;
-        jy901->acc.z = (float)jy901_raw.stcAcc.a[2] / 2048;
+        jy901->acc.x = (((jy901_raw.stcAcc.a[1]<<8)|(jy901_raw.stcAcc.a[0])) / 32768.0f*16*9.8); // 32768*16
+        jy901->acc.y = (((jy901_raw.stcAcc.a[3]<<8)|(jy901_raw.stcAcc.a[2])) / 32768.0f*16*9.8);
+        jy901->acc.z = (((jy901_raw.stcAcc.a[5]<<8)|(jy901_raw.stcAcc.a[4])) / 32768.0f*16*9.8);
         jy901->temperature = (float)jy901_raw.stcAcc.T / 100;
+       // log_i("acc.x %f", jy901->acc.x);
+        
+      //  log_i("acc.x = %f",jy901_raw.stcAcc.a[0]);
         //printf("acc %0.2f %0.2f %0.2f  %0.2fC\n", jy901->acc.x, jy901->acc.y, jy901->acc.z, jy901->temperature);
     }
     break;
@@ -54,9 +57,11 @@ static void jy901_convert(uint8_t which, jy901_t *jy901)
     break;
     case 0x53:
     {
-        jy901->roll = (float)jy901_raw.stcAngle.angle[0] / 8192 * 45; // 32768*180;
-        jy901->pitch = (float)jy901_raw.stcAngle.angle[1] / 8192 * 45;
-        jy901->yaw = (float)jy901_raw.stcAngle.angle[2] / 8192 * 45;
+        jy901->roll = (((jy901_raw.stcAngle.angle[1]<<8)|(jy901_raw.stcAngle.angle[0]))/32768.0f*180); // 32768*180;
+        jy901->pitch= (((jy901_raw.stcAngle.angle[3]<<8)|(jy901_raw.stcAngle.angle[2]))/32768.0f*180);
+        jy901->yaw  = (((jy901_raw.stcAngle.angle[5]<<8)|(jy901_raw.stcAngle.angle[4]))/32768.0f*180);
+
+    
         //printf("angle %0.2f %0.2f %0.2f\n", jy901->roll, jy901->pitch, jy901->yaw);
     }
     break;
@@ -92,6 +97,7 @@ void copeJY901_data(uint8_t data, jy901_t *jy901)
     static uint8_t rxCount = 0;        // 接收计数
 
     rxBuffer[rxCount++] = data; // 将收到的数据存入缓冲区中
+    
     if (rxBuffer[0] != 0x55)
     {
         // 数据头不对，则重新开始寻找0x55数据头
@@ -100,13 +106,14 @@ void copeJY901_data(uint8_t data, jy901_t *jy901)
     }
     if (rxCount < JY901_PACKET_LENGTH)
         return; // 数据不满11个，则返回
-
+   
     /*********** 只有接收满11个字节数据 才会进入以下程序 ************/
     for (i = 0; i < JY901_PACKET_LENGTH - 1; i++)
         rxCheck += rxBuffer[i]; //校验位累加
 
     if (rxCheck == rxBuffer[JY901_PACKET_LENGTH - 1]) // 判断数据包校验是否正确
-    {
+    {   
+         
         // 判断数据是哪种数据，然后将其拷贝到对应的结构体中，有些数据包需要通过上位机打开对应的输出后，才能接收到这个数据包的数据
         switch (rxBuffer[1])
         {
@@ -114,13 +121,16 @@ void copeJY901_data(uint8_t data, jy901_t *jy901)
             memcpy(&jy901_raw.stcTime, &rxBuffer[2], 8);
             break;
         case 0x51:
-            memcpy(&jy901_raw.stcAcc, &rxBuffer[2], 8);
+            memcpy(&jy901_raw.stcAcc, &rxBuffer[2], 8); 
+
             break;
         case 0x52:
             memcpy(&jy901_raw.stcGyro, &rxBuffer[2], 8);
             break;
         case 0x53:
-            memcpy(&jy901_raw.stcAngle, &rxBuffer[2], 8);
+            memcpy(&jy901_raw.stcAngle, &rxBuffer[2], 8); 
+            jy901_raw.stcAngle.angle[4] =  rxBuffer[6];
+            jy901_raw.stcAngle.angle[5] =  rxBuffer[7];
             break;
         case 0x54:
             memcpy(&jy901_raw.stcMag, &rxBuffer[2], 8);
@@ -162,3 +172,7 @@ int jy901Setup(void)
     // jy901Reset(fd); // 恢复出厂设置
     return fd;
 }
+
+
+
+
