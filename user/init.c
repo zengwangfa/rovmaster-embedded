@@ -6,8 +6,8 @@
 #include "init.h"
 
 #include "../applications/data.h"
-
 #include "../applications/display.h"
+#include "../applications/focus.h"
 #include "../applications/ioDevices.h"
 #include "../applications/pwmDevices.h"
 #include "../applications/sensor.h"
@@ -89,6 +89,8 @@ int system_init(void)
     system_status_thread_init(); // 获取系统状态线程 初始化
 
     display_thread_init(); // 显示模块线程 初始化
+
+    focus_camera_thread_init(); // 变焦镜头控制器线程 初始化
 
     propeller_thread_init();
     return 0;

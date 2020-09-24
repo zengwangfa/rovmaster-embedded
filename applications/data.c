@@ -22,7 +22,7 @@ cmd_t cmd_data = {
     .left_right = 127,
     .up_down = 127,
     .rotate = 127,
-    
+
 };
 
 void rov_all_params_init(void)
