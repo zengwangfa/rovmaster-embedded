@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-07-03 15:23:51
- * @LastEditTime: 2020-08-07 15:43:41
+ * @LastEditTime: 2020-11-01 12:35:02
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \rovmaster-embedded\user\dev_control.c
@@ -16,7 +16,8 @@
 
 #include "control.h"
 #include "datatype.h"
-
+#include "focus.h"
+#include "data.h"
 #include <elog.h>
 #include <math.h>
 #include <pthread.h>
@@ -26,6 +27,7 @@
 extern rockerInfo_t rocker;
 extern int yaw_conposent;     //测试
 extern powerconpensation_t Propeller_resist_flow;
+extern uint8_t camera_control_data[6];
 
 void *propeller_thread(void *arg)
 {
@@ -46,6 +48,7 @@ void *test_printf(void *arg)
 {
     while (1)
     {
+        static int i;
         // printf("propeller->leftUp %d \n",rovdev.propellerPower.leftUp);
         // printf("propeller->rightUp %d \n",rovdev.propellerPower.rightUp);
         // printf("propeller->leftDown %d \n",rovdev.propellerPower.leftDown);
@@ -54,9 +57,16 @@ void *test_printf(void *arg)
         // printf("propeller->rightMiddle %d \n",rovdev.propellerPower.rightMiddle); 
         // printf("Control_OutPut %f \n",Total_Controller.Yaw_Angle_Control.Control_OutPut);
         // printf("Expect %f \n",Total_Controller.Yaw_Angle_Control.Expect);
-        printf("FeedBack %f \n",Total_Controller.Yaw_Angle_Control.FeedBack);
-        printf("roll %f \n",rovInfo.jy901.roll);
-        printf("pitch %f \n",rovInfo.jy901.pitch);
+        // printf("FeedBack %f \n",Total_Controller.Yaw_Angle_Control.FeedBack);
+        // printf("roll %f \n",rovInfo.jy901.roll);
+        // printf("pitch %f \n",rovInfo.jy901.pitch);
+        for ( i = 0; i < 6; i++)
+        {
+            printf("control_data[%d] %d \n",i,camera_control_data[i]);
+        }
+        
+        printf("camera %d \n",cmd_data.camera);
+        printf("ms5837 %lf \n",rovInfo.depthSensor.depth);
         // printf("depth %f \n",rovInfo.depthSensor.depth);
         // printf("acc %f \n",rovInfo.jy901.acc.x);
         // printf("Expect %f \n",Total_Controller.Location_X_Control.Expect);

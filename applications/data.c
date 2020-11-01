@@ -205,7 +205,7 @@ void remote_control_data_analysis(uint8_t *buff, cmd_t *cmd) //控制数据解�
                 /* 设备类 */
                 cmd->power = buff[9];   // 动力控制  推进器动力系数
                 cmd->light = buff[10];  // 灯光控制
-                cmd->camera = buff[11]; // 变焦摄像头控制
+                cmd->camera = buff[10]; // 变焦摄像头控制
                 cmd->yuntai = buff[12]; // 云台控制
                 cmd->arm = buff[13];    // 机械臂控制
             }

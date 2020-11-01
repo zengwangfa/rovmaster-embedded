@@ -11,10 +11,11 @@
 #include <wiringPi.h>
 #include <wiringSerial.h>
 
+
 static int fd;
 static int is_ok;
 /* 返回数据包，包头位固定为：0xAA,0x55;  数据长度位：0x02 */
-static uint8_t camera_control_data[CAMERA_CONTROL_DATA_LEN] = {0xAA, 0x55, 0x02};
+uint8_t camera_control_data[CAMERA_CONTROL_DATA_LEN] = {0xAA, 0x55, 0x02};
 
 /**
  * @brief  变焦镜头控制
@@ -51,7 +52,7 @@ void focus_zoom_camera_control(uint8_t *action)
         // 计算校验位
         camera_control_data[5] = calculate_check_sum(camera_control_data, sizeof(camera_control_data) - 1);
         for (int i = 0; i < 6; i++)
-            printf("%#x ", camera_control_data[i]);
+            printf("%d ", camera_control_data[i]);
         write(fd, camera_control_data, sizeof(camera_control_data));
         *action = 0x00;
     }
@@ -101,7 +102,9 @@ int focus_camera_thread_init(void)
     pthread_t focus_tid;
     pthread_t focus_recv_tid;
     uint8_t focus_cam_step_angle = 10; // 步进角度为10，即变焦控制器每接收到一次指令转10个单位，一个周期为360
+    static uint8_t is_ok_flag = 0;
 
+    
     // 先创建用于接收反馈的线程，用于后面初始化检验
     pthread_create(&focus_recv_tid, NULL, &focus_camera_receive_thread, NULL);
     pthread_detach(focus_recv_tid);
@@ -114,6 +117,12 @@ int focus_camera_thread_init(void)
         return -1;
     }
     focus_zoom_camera_control(&focus_cam_step_angle); // 发送设定步进角度 变焦控制器是否存在
+
+    if(is_ok_flag==0)
+    {
+        is_ok_flag = 1;
+        is_ok = 1;
+    }
     delay(1000);                                      // 等待反馈
     if (is_ok)
     {

@@ -14,6 +14,7 @@
 #include <pthread.h>
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 
 #include <wiringPi.h>
 #include <wiringSerial.h>
@@ -78,7 +79,7 @@ void *jy901_thread(void *arg)
 void *depthSensor_thread(void *arg)
 {
     uint8_t flag = 0, cnt = 0;
-
+    static float depthSensor_last = 0,depthSensor_rebuffer = 0;
     // 获取初始压力值(岸上大气压值) 如果初始压力值异常(比标准大气压很大或很小)，重新进行初始化
     depthSensor->init_pressure = digitalRead(depthSensor->pin);
 
@@ -107,16 +108,22 @@ void *depthSensor_thread(void *arg)
 
         // 获取温度值 通道1
         depthSensor->temperature = digitalRead(depthSensor->pin + 1) / 100.0f; // 除以100转换为温度值
-
-        // ((测得水深压力)-(岸上压力 101325))/(1000*9.8) 淡水1000  海水1030   p=ρgh
-        depthSensor->depth =
+        // ((测得水深压力)-(岸上压力 101325))/(1000*9.8) 淡水1000  海水1030   p=ρgh   暂存在缓冲变量中    
+        depthSensor_rebuffer =
             (depthSensor->pressure - depthSensor->init_pressure) / (9.8 * 1000);
+
+        if(fabs(depthSensor_last - depthSensor_rebuffer )<10)      //如果当前深度比上次深度差值小于10，即深度不变
+        {
+            depthSensor->depth = depthSensor_rebuffer;              //赋予当前深度值
+        }
+       
         pthread_mutex_unlock(&mutex);
 
         /*printf("temp %.2f, init %d, pressure %d, depth %.2f\n",
                depthSensor->temperature, depthSensor->init_pressure, depthSensor->pressure, depthSensor->depth);*/
 
         depthSensor->last_pressure = depthSensor->pressure;
+        depthSensor_last = depthSensor->depth;
         delay(10);
     }
 }
