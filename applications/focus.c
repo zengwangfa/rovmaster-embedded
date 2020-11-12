@@ -110,7 +110,7 @@ int focus_camera_thread_init(void)
     pthread_detach(focus_recv_tid);
 
     // 小于0代表无法找到该uart接口，输入命令 sudo npi-config 使能该uart接口
-    fd = serialOpen(FOCUS_CAMERA_UART_DEV, UART_BAUD_115200);
+    fd = serialOpen(FOCUS_CAMERA_UART_DEV, 115200);
     if (fd < 0)
     {
         log_e("focus camera uart init failed");

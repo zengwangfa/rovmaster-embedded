@@ -5,6 +5,7 @@
 
 #define FOCUS_CAMERA_UART_DEV "/dev/ttyS1" // 变焦镜头 使用的 UART 设备
 #define UART_BAUD_115200 115200            // 变焦镜头 UART 波特率
+#define UART_BAUD_9600 9600                // 变焦镜头 UART 波特率
 
 #define CAMERA_CONTROL_DATA_LEN 6
 
