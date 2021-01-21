@@ -129,6 +129,8 @@ void copeJY901_data(uint8_t data, jy901_t *jy901)
             break;
         case 0x53:
             memcpy(&jy901_raw.stcAngle, &rxBuffer[2], 8); 
+            jy901_raw.stcAngle.angle[0] =  rxBuffer[2];
+            jy901_raw.stcAngle.angle[1] =  rxBuffer[3];
             jy901_raw.stcAngle.angle[4] =  rxBuffer[6];
             jy901_raw.stcAngle.angle[5] =  rxBuffer[7];
             break;

@@ -24,9 +24,9 @@ const float Control_Unit[18][20] = {
     {0, 1, 0, 0, 0, 0, 0, 500, 0, 0, 200, 0.75, 3.5000, 1.80, 0, 0, 5000, 1, 1, 1}, //Pitch_Gyro;俯仰角速度  2
     {0, 1, 0, 0, 0, 0, 0, 250, 0, 0, 100, 1.00, 0.5000, 0.00, 0, 0, 3000, 1, 1, 1}, //Yaw_Gyro;偏航角速度    3
 
-    {0, 1, 0, 0, 0, 0, 0, 30, 0, 0, 80, 4.00, 0.0000, 0.00, 0, 0, 3000, 1, 1, 1},  //Pitch_Angle;俯仰角度    4
-    {0, 1, 0, 0, 0, 0, 0, 45, 0, 0, 150, 5.00, 0.0000, 0.00, 0, 0, 3000, 1, 1, 1}, //Roll_Angle;横滚角 		 5
-    {1, 1, 1, 0, 0, 0, 0, 100, 0, 0, 200, 4.00, 0.0000, 0.00, 0, 0, 130, 1, 1, 1},  //Yaw_Angle;偏航角        6
+    {1, 1, 1, 0, 0, 0, 0, 30, 0, 0, 80, 4.00, 0.0000, 0.00, 0, 0, 3000, 1, 1, 1},  //Roll_Angle;俯仰角度    4
+    {1, 1, 1, 0, 0, 0, 0, 45, 0, 0, 150, 5.00, 0.0000, 0.00, 0, 0,  130, 1, 1, 1}, //pitch_Angle;横滚角 		 5
+    {1, 1, 1, 0, 0, 0, 0, 100, 0, 0, 200, 4.00, 1.0000, 1.00, 0, 0, 130, 1, 1, 1},  //Yaw_Angle;偏航角        6
 
     /*                                     Kp    Ki   Kd                     */
     /*1 2  3  4  5  6   7  8   9 10   11   12    13   14  15 16   17  18*/
@@ -131,8 +131,8 @@ float PID_Control_Yaw(PID_Controler *Controler)
     Controler->Last_Err = Controler->Err;                     //保存上次偏差
     Controler->Err = Controler->Expect - Controler->FeedBack; //期望减去反馈得到偏差  FeedBack
     /***********************偏航角偏差超过+-180处理*****************************/
-    if(Controler->Err < -270)  Controler->Err = Controler->Err + 360;
-    if(Controler->Err > 270)  Controler->Err = Controler->Err - 360;
+    if(Controler->Err <-180)  Controler->Err = Controler->Err + 360;
+    if(Controler->Err > 180)  Controler->Err = Controler->Err - 360;
 
     if (Controler->Err_Limit_Flag == 1) //偏差限幅度标志位
     {
