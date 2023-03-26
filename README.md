@@ -31,7 +31,6 @@ $ cd rovmaster-embedded
 ```shell
 $ chmod +x build.sh
 $ ./build.sh
-
 ```
 build.sh 中安装相关依赖库
 
