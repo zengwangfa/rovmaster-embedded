@@ -9,11 +9,11 @@
 
 #include "ads1118.h"
 
-#include <elog.h>
+
 #include <stdio.h>
 
-#include <wiringPi.h>
-#include <wiringPiSPI.h>
+#include "wiringPi.h"
+#include "../wiringPi/wiringPiSPI.h"
 
 static ads1118_t ads1118;
 
@@ -40,7 +40,7 @@ static uint16_t ads1118_transmit(int fd, int channel)
         ads1118.config |= (MUX_S3 << 12);
         break;
     default:
-        log_e("ads1118 channel range in [0, 3]");
+        printf("ads1118 channel range in [0, 3]");
     }
 
     spiData[0] = (ads1118.config >> 8) & 0xff; // 写入配置寄存器 (datasheet P24)
@@ -91,11 +91,13 @@ int ads1118Setup(const int pinBase)
     /* 注意ads1118配置SPI接口为 SPI mode 1  */
     uint8_t mode = 1;   // mode 1 (CPOL = 0, CPHA = 1)  (datasheet P31)
     int spiChannel = 1; // spiChannel = 1代表使用 /dev/spidev1.0
-
+    printf("open spidev1.0\n");
     // 小于0代表无法找到该spi接口，输入命令 sudo npi-config 使能该spi接口
     fd = wiringPiSPISetupMode(spiChannel, ADS1118_OSC_CLK, mode); // (/dev/spidev1.0   1MHz  mode1)
-    if (fd < 0)
+    if (fd < 0) {
+        printf("open ads11118 spidev failed\n");
         return -1;
+    }
 
     ads1118.config = 0;
     /* 设置配置寄存器 448Bh */

@@ -17,7 +17,9 @@ if [ "$COMPILE_FLAG"x = "1"x ]; then
     echo "=====================编译WiringNP=========================="
     cd ./lib/WiringNP/
     chmod 755 build
+    ./build clean
     ./build
+    cp ./libwiringPi.a ../
 
 elif [ "$COMPILE_FLAG"x = "2"x ]; then
     echo "=======================编译easylogger======================"

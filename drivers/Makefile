@@ -2,6 +2,7 @@
 #DIR指的是.o文件和.c文件所在的目录
 DIR=.
 
+CROSS_COMPILE = arm-linux-gnueabihf-
 #BIN指的是最终生成的目标对象名(包括路径)，它可以是可执行程序、动态链接库或静态链接库
 BIN=$(DIR)/libdrivers.a
 
@@ -14,7 +15,7 @@ SHARE=--share
 #-g     : 编译时加入调试信息，以便之后可以用gdb调试
 #-fPIC  : 编译动态链接库时加入的选项
 #-I./inc: -I选项指定从哪个目录寻找头文件，在这指定之后，在源文件中包含头文件就可以使用<>，这里./inc即为指定的目录
-CFLAG=-Wall -g -lwiringPi -lpthread -lasound -lm -I../lib/easylogger/inc
+CFLAG=-Wall -g -lwiringPi -lpthread  -lm -I../lib/easylogger/inc -I../lib/WiringNP/wiringPi
 
 #LFLAG即library flag，表示链接生成可执行程序时所要链接的所有库的选项参数
 #-L./lib : -L指示动态/静态链接库所在的目录，这里./lib即所在的目录
@@ -23,12 +24,12 @@ CFLAG=-Wall -g -lwiringPi -lpthread -lasound -lm -I../lib/easylogger/inc
 LFLAG=
 
 #CC即编译链接命令gcc -o 用于编译或者链接动态库以及可执行程序
-CC=gcc -o
+CC=arm-linux-gnueabi-gcc -o
 
 #AR即ar -cr ，ar -cr是专门链接生成静态库的命令
 #-c : 即create，创建静态库
 #-r : 即replace，当静态库改变时，替代原有静态库
-AR=ar -cr
+AR=arm-linux-gnueabi-ar -cr
 
 #最终用的是哪个链接命令
 #链接生成动态库和可执行程序用CC

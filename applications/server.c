@@ -12,13 +12,11 @@
 
 #define LOG_TAG "server"
 #include"../user/datatype.h"
-
-#include "server.h"
 #include "../drivers/sys_status.h"
+#include "server.h"
 #include "data.h"
 
 #include <arpa/inet.h>
-#include <elog.h>
 #include <errno.h>
 #include <net/if.h>
 #include <netdb.h>
@@ -31,7 +29,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include <wiringPi.h>
+#include "wiringPi.h"
 
 /* 接收数据包 */
 static uint8_t recv_buff[RECV_DATA_LEN] = {0};
@@ -65,7 +63,7 @@ void *send_thread(void *arg)
             // 发送失败，则关闭当前socket，client_sock 置为 -1，等待下次连接
             if (client_sock != -1)
             {
-                log_i("IP [%s] client closed", arg);
+                printf("IP [%s] client closed", (char *)arg);
                 close(client_sock);
                 client_sock = -1;
             }
@@ -89,7 +87,7 @@ void *recv_thread(void *arg)
             // 接收失败，则关闭当前socket，client_sock = -1，等待下次连接
             if (client_sock != -1)
             {
-                log_i("IP [%s] client closed", arg);
+                printf("IP [%s] client closed", (char *)arg);
                 close(client_sock);
                 client_sock = -1;
             }
@@ -122,14 +120,14 @@ void *server_thread(void *arg)
     /* 1.初始化服务器socket */
     if ((server_sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0)
     {
-        log_e("create server socket error:%s(errno:%d)\n", strerror(errno), errno);
+        printf("create server socket error:%s(errno:%d)\n", strerror(errno), errno);
         exit(1);
     }
 
     // 设置套接字, SO_REUSERADDR 允许重用本地地址和端口，允许绑定已被使用的地址（或端口号）
     if (setsockopt(server_sock, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)
     {
-        log_e("setsockopt port for reuse error:%s(errno:%d)\n", strerror(errno), errno);
+        printf("setsockopt port for reuse error:%s(errno:%d)\n", strerror(errno), errno);
     }
 
     /* 2.设置服务器sockaddr_in结构 */
@@ -141,28 +139,28 @@ void *server_thread(void *arg)
     /* 3.绑定socket和端口 */
     if (bind(server_sock, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) < 0)
     {
-        log_e("bind socket error:%s(errno:%d)", strerror(errno), errno);
+        printf("bind socket error:%s(errno:%d)\n", strerror(errno), errno);
         exit(1);
     }
 
     /* 4.监听,最大连接客户端数 BACKLOG */
     if (listen(server_sock, BACKLOG) < 0)
     {
-        log_e("listen socket error :%s(errno:%d)", strerror(errno), errno);
+        printf("listen socket error :%s(errno:%d)\n", strerror(errno), errno);
         exit(1);
     }
-    log_i("waiting for clients to connect ...");
+    printf("waiting for clients to connect ...\n");
 
     // 获取eth0的 ip地址
     get_localip("eth0", serverip);
-    log_i("rov server start [%s:%d]", serverip, LISTEN_PORT);
+    printf("rov server start [%s:%d]\n", serverip, LISTEN_PORT);
 
     while (1)
     {
         /* 5.接受客户请求，并创建线程处理(可连续接收多个客户端，每个客户端创建2个线程进行处理) */
         if ((client_sock = accept(server_sock, (struct sockaddr *)&clientAddr, &addrLen)) < 0)
         {
-            log_e("accept socket error:%s(errorno:%d)", strerror(errno), errno);
+            printf("accept socket error:%s(errorno:%d)", strerror(errno), errno);
 
             continue;
         }
@@ -170,7 +168,7 @@ void *server_thread(void *arg)
         strncpy(clientip, inet_ntoa(clientAddr.sin_addr), sizeof(clientip));
         // 打印客户端连接次数及IP地址
         
-        log_i("conneted success from clinet [NO.%d] IP: [%s]", ++clientCnt, clientip);
+        printf("conneted success from clinet [NO.%d] IP: [%s]", ++clientCnt, clientip);
 
         pthread_create(&send_tid, NULL, send_thread, clientip);
         pthread_detach(send_tid);

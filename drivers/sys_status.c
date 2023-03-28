@@ -11,7 +11,7 @@
 
 #include "sys_status.h"
 
-#include <elog.h>
+
 #include <errno.h>
 #include <math.h>
 #include <stdio.h>

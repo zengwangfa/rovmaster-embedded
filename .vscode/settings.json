@@ -21,7 +21,14 @@
         "elog.h": "c",
         "ms5837.h": "c",
         "sys_status.h": "c",
-        "debug.h": "c"
+        "debug.h": "c",
+        "unistd.h": "c",
+        "mcp23s17.h": "c",
+        "in.h": "c",
+        "wiringpii2c.h": "c",
+        "pthread.h": "c",
+        "mcp23016reg.h": "c",
+        "mcp23x0817.h": "c"
     },
     "python.jediEnabled": false,
     "C_Cpp.errorSquiggles": "Disabled"

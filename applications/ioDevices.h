@@ -4,7 +4,7 @@
 
 #include "../user/config.h"
 
-#include <wiringPi.h>
+#include "wiringPi.h"
 
 // 蜂鸣器 wiringpi引脚号
 #define BUZZER_PIN 12

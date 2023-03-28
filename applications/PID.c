@@ -5,7 +5,7 @@
 #define LOG_TAG "PID"
 
 #include "PID.h"
-#include <elog.h>
+
 #include <math.h>
 
 AllControler Total_Controller; //总控制器PID

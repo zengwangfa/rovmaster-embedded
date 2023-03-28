@@ -21,8 +21,9 @@
 # 2. 使用
 - 运行环境：NanoPi NEO
 ```shell
+$ mkdir rov
+$ cd rov
 $ git clone https://github.com/ROV-Master/rovmaster-embedded
-$ cd rovmaster-embedded
 ```
 
 ## 2.1 安装相关依赖
@@ -63,6 +64,12 @@ $ sudo npi-config
 启动 `compile.sh` 脚本，输入对应库的编号，进行自动化编译，并自动拷贝相关库
 ```shell
 $ ./compile.sh
+```
+
+### 2.3.3 交叉编译
+```bash
+# ubuntu 上编译出来，通过scp传到nano-pi上
+scp ./rovmaster root@192.168.31.213:/root/
 ```
 
 ### 2.3.3 视频推流

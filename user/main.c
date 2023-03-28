@@ -7,17 +7,17 @@
 #include "config.h"
 #include "datatype.h"
 #include "init.h"
-#include <elog.h>
+
 #include <pthread.h>
 #include <signal.h>
 #include <stdio.h>
-#include <wiringPi.h>
+#include "wiringPi.h"
 
 // <CTRL>+C 程序中断回调
 static void signal_handler(int sig)
 {
 
-    log_w("force cancellation of threads and cleanup resources\n");
+    printf("force cancellation of threads and cleanup resources\n");
 
     exit(0);
 }
@@ -130,7 +130,7 @@ int main(int argc, char **argv)
 
     /* 注册 signal_handler 忽略掉终端<CTRL>+C 产生的SIGINT退出信号，为了在退出前做一些清理工作 */
     if (signal(SIGINT, signal_handler) == SIG_ERR)
-        log_e("could not register signal handler\n");
+        printf("could not register signal handler\n");
 
     pthread_create(&mjpg_tid, NULL, mjpg_streamer_thread, NULL);
     pthread_detach(mjpg_tid);

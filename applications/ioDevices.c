@@ -7,13 +7,13 @@
 #include "ioDevices.h"
 #include "../user/datatype.h"
 
-#include <elog.h>
+
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include <wiringPi.h>
+#include "wiringPi.h"
 
 // 定义模拟pwm设备描述符，并指定pin、name
 static softPWM_t ledr = {
@@ -192,6 +192,6 @@ int ioDevs_thread_init(void)
     pthread_create(&buttons_tid, NULL, button_thread, NULL);
     pthread_detach(buttons_tid);
 
-    log_i("ioDevs  init");
+    printf("ioDevs  init");
     return 0;
 }

@@ -16,7 +16,6 @@
 #include "../user/datatype.h"
 #include "../user/debug.h"
 
-#include <elog.h>
 #include <stdio.h>
 
 #define BYTE0(dwTemp) (*((char *)(&dwTemp) + 0))
@@ -166,7 +165,7 @@ void ANO_DT_Data_Receive_Anl(uint8_t *data_buf, uint8_t num)
         {
             Total_PID_Init();       // 将PID参数重置为参数Control_Unit表里面参数
             write_rov_all_params(); // 写入PID参数
-            log_i("reset pid params -> Success!");
+            printf("reset pid params -> Success!");
         }
     }
 
@@ -239,7 +238,7 @@ void ANO_DT_Data_Receive_Anl(uint8_t *data_buf, uint8_t num)
         rovdev.robot_arm.med = (rovdev.robot_arm.nMax + rovdev.robot_arm.pMax) / 2;
 
         write_rov_all_params(); // 写入PID参数
-        log_i("write pid params -> success!");
+        printf("write pid params -> success!");
         ANO_DT_Send_Check(*(data_buf + 2), sum);
     }
 }
@@ -783,5 +782,5 @@ void ANO_DT_Send_All_PID(void)
                          rovdev.robot_arm.nMax,
                          rovdev.robot_arm.pMax,
                          rovdev.robot_arm.speed);
-    log_i("read pid params -> success!");
+    printf("read pid params -> success!");
 }

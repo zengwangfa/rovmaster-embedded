@@ -18,11 +18,10 @@
 #include "debug.h"
 #include "dev_control.h"
 
-#include <elog.h>
 #include <stdio.h>
 #include <string.h>
 
-#include <wiringPi.h>
+#include "wiringPi.h"
 
 // 全局ROV信息
 rovInfo_t rovInfo;
@@ -62,17 +61,14 @@ rovDev_t rovdev = {
 
 int system_init(void)
 {
-    // easylogger日志系统 初始化
-    easylogger_init();
-
     if (wiringPiSetup() < 0)
     {
-        log_e("Unable to start wiringPi: %s", strerror(errno));
+        printf("Unable to start wiringPi: %s\n", strerror(errno));
         return -1;
     }
 
     // TODO ROV模式获取 4推 还是 6推
-    log_i("Welcome to ROV Master V%s\n", ROV_MASTER_VERSION);
+    printf("Welcome to ROV Master V%s\n", ROV_MASTER_VERSION);
 
     rov_all_params_init(); // ROV参数初始化
 

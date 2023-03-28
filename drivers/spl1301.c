@@ -6,12 +6,12 @@
 
 #include "spl1301.h"
 
-#include <elog.h>
+
 #include <errno.h>
 #include <math.h>
 #include <stdio.h>
 
-#include <wiringPi.h>
+#include "wiringPi.h"
 #include <wiringPiI2C.h>
 
 static spl1301_t spl1301;
@@ -315,7 +315,7 @@ static int myDigitalRead(struct wiringPiNodeStruct *node, int pin)
         return (spl1301.temperature * 100); // 扩大100倍，方便int类型传输
     else
     {
-        log_e("spl1301 channel range in [0, 1]");
+        printf("spl1301 channel range in [0, 1]");
         return -1;
     }
 }

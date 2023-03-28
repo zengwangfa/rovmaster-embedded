@@ -11,7 +11,7 @@
 #include "data.h"
 #include "display.h"
 
-#include <elog.h>
+
 #include <pthread.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -21,7 +21,7 @@
   */
 void oled_show_status(void)
 {
-    char str[20];
+    char str[32];
 
     sprintf(str, "IP  %s", rovInfo.net.ip);
     OLED_ShowString(0, 0, (uint8_t *)str, 12);
@@ -90,11 +90,11 @@ int display_thread_init(void)
     if (fd < 0)
     {
         // 错误日志打印
-        ERROR_LOG(fd, "oled");
+        printf("oled init failed");
         return -1;
     }
 
-    log_i("oled    init");
+    printf("oled init");
     pthread_create(&display_tid, NULL, &display_thread, NULL);
     pthread_detach(display_tid);
 

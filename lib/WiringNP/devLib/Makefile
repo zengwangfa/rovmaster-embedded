@@ -32,9 +32,9 @@ DYNAMIC=libwiringPiDev.so.$(VERSION)
 
 #DEBUG	= -g -O0
 DEBUG	= -O2
-CC	= gcc
+CC	= arm-linux-gnueabi-gcc
 INCLUDE	= -I.
-CFLAGS	= $(DEBUG) -Wformat=2 -Wall $(INCLUDE) -Winline -pipe -fPIC
+CFLAGS	= $(DEBUG) -Wformat=2 -Wall $(INCLUDE) -Winline -pipe -fPIC -I../wiringPi
 
 LIBS    =
 

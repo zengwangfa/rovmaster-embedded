@@ -33,7 +33,7 @@ DYNAMIC=libwiringPi.so.$(VERSION)
 
 #DEBUG	= -g -O0
 DEBUG	= -O2
-CC	= gcc
+CC	= arm-linux-gnueabi-gcc
 INCLUDE	= -I.
 DEFS	= -D_GNU_SOURCE
 CFLAGS	= $(DEBUG) $(DEFS) -Wformat=2 -Wall -Winline $(INCLUDE) -pipe -fPIC -Wpointer-to-int-cast
@@ -60,7 +60,7 @@ SRC	=	wiringPi.c						\
 
 OBJ	=	$(SRC:.c=.o)
 
-all:		$(DYNAMIC)
+all:		$(STATIC)
 
 static:		$(STATIC)
 

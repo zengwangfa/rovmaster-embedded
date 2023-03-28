@@ -10,13 +10,13 @@
 #include "../drivers/spl1301.h"
 #include "../user/datatype.h"
 
-#include <elog.h>
+
 #include <pthread.h>
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
 
-#include <wiringPi.h>
+#include "wiringPi.h"
 #include <wiringSerial.h>
 
 #define ADS1118_PIN_BASE 500 // wiringpi node编号
@@ -86,7 +86,7 @@ void *depthSensor_thread(void *arg)
     // 如果初始压力值与标准大气压相差 20kPa，重新初始化获取(3次重新初始化)     // 101325-20000 ≈ 80000(大约1800m)
     while ((abs(depthSensor->init_pressure - STANDARD_ATMOSPHERIC_PRESSURE) > 20000) && (cnt++ < 3))
     {
-        log_w("depth sensor error, trying init it again...");
+        printf("depth sensor error, trying init it again...");
         depthSensor->pin += 2;                                      // 原始的pin_base编号舍去，使用+2
         depthSensor_detect(depthSensor->pin);                       // 重新初始化
         depthSensor->init_pressure = digitalRead(depthSensor->pin); // 重新获取初始压力
@@ -101,7 +101,7 @@ void *depthSensor_thread(void *arg)
         /* 如果压力值与上一次压力值相差 0.2个标准大气压，舍弃该数据 */
         if (flag && (abs(depthSensor->last_pressure - depthSensor->pressure) > (0.2 * STANDARD_ATMOSPHERIC_PRESSURE)))
         {
-            log_e("%d", depthSensor->pressure);
+            printf("%d", depthSensor->pressure);
             depthSensor->pressure = depthSensor->last_pressure; // 使用上一次的数据
         }
         flag = 1; // 第一次不进行比较上一次的值
@@ -160,10 +160,10 @@ int sensor_thread_init(void)
     // ADS1118 ADC 初始化
     fd = ads1118Setup(ADS1118_PIN_BASE);
     if (fd < 0) // 先判断设备是否存在，不存在不创建对应线程
-        ERROR_LOG(fd, "ads1118");
+        printf("ads1118 init failed");
     else
     {
-        log_i("ads1118 init");
+        printf("ads1118 init");
         pthread_create(&adc_tid, NULL, adc_thread, NULL);
         pthread_detach(adc_tid);
     }
@@ -171,10 +171,10 @@ int sensor_thread_init(void)
     // JY901 九轴 初始化
     fd = jy901Setup();
     if (fd < 0)
-        ERROR_LOG(fd, "jy901");
+        printf("jy901 init failed");
     else
     {   
-        log_i("jy901   init");
+        printf("jy901   init");
         pthread_create(&jy901_tid, NULL, jy901_thread, &fd);
         pthread_detach(jy901_tid);
     }
@@ -185,12 +185,12 @@ int sensor_thread_init(void)
         fd = depthSensor_detect(DEPTH_SENSOR_PIN_BASE);
 
         if (fd < 0 && cnt == 1) // 第1次无法检测到，打印警告信息
-            log_w("depth sensor cannot detected, trying init it again...");
+            printf("depth sensor cannot detected, trying init it again...");
         else if (fd < 0 && cnt == 0) // 第2次无法检测到，打印错误信息
-            ERROR_LOG(fd, "depth sersor");
+            printf("depth sersor init failed");
         else
         {
-            log_i("%s init", depthSensor->name);
+            printf("%s init", depthSensor->name);
             pthread_create(&depth_tid, NULL, depthSensor_thread, NULL);
             pthread_detach(depth_tid);
             break; // 初始化成功，则直接跳出

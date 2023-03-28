@@ -6,14 +6,14 @@
 
 #include "jy901.h"
 
-#include <elog.h>
+
 #include <errno.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include <wiringPi.h>
+#include "wiringPi.h"
 #include <wiringSerial.h>
 
 static uint8_t jy901_reset_cmd[5] = {0xFF, 0xAA, 0x00, 0x01, 0x00}; // 0x00-设置保存  0x01-恢复出厂设置并保存
@@ -41,9 +41,9 @@ static void jy901_convert(uint8_t which, jy901_t *jy901)
         jy901->acc.y = (((jy901_raw.stcAcc.a[3]<<8)|(jy901_raw.stcAcc.a[2])) / 32768.0f*16*9.8);
         jy901->acc.z = (((jy901_raw.stcAcc.a[5]<<8)|(jy901_raw.stcAcc.a[4])) / 32768.0f*16*9.8);
         jy901->temperature = (float)jy901_raw.stcAcc.T / 100;
-       // log_i("acc.x %f", jy901->acc.x);
+       // printf("acc.x %f", jy901->acc.x);
         
-      //  log_i("acc.x = %f",jy901_raw.stcAcc.a[0]);
+      //  printf("acc.x = %f",jy901_raw.stcAcc.a[0]);
         //printf("acc %0.2f %0.2f %0.2f  %0.2fC\n", jy901->acc.x, jy901->acc.y, jy901->acc.z, jy901->temperature);
     }
     break;

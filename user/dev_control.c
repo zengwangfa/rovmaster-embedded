@@ -18,7 +18,7 @@
 #include "datatype.h"
 #include "focus.h"
 #include "data.h"
-#include <elog.h>
+
 #include <math.h>
 #include <pthread.h>
 #include <stdio.h>
@@ -94,6 +94,6 @@ int propeller_thread_init(void)
     pthread_create(&propeller_tid1, NULL, &test_printf, NULL);
     pthread_detach(propeller_tid1);
 
-    log_i("propeller controller init");
+    printf("propeller controller init");
     return 0;
 }

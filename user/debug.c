@@ -5,7 +5,7 @@
 
 #include "../tools/ano_link.h"
 #include <arpa/inet.h>
-#include <elog.h>
+
 #include <errno.h>
 #include <net/if.h>
 #include <netdb.h>
@@ -19,7 +19,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include <wiringPi.h>
+#include "wiringPi.h"
 
 #define ANO_SERVER_PORT 8000
 
@@ -96,7 +96,7 @@ static void *server_thread(void *arg)
     if (recvfrom(sockfd, mesg, sizeof(mesg), 0, (struct sockaddr *)&clientAddr, &addrLen) < 0)
         perror("recvfrom error");
 
-    log_i("ano link [%s:%d]", inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port)); // 打印消息发送方的IP与PORT
+    printf("ano link [%s:%d]", inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port)); // 打印消息发送方的IP与PORT
 
     pthread_create(&send_tid, NULL, ano_send_thread, NULL);
     pthread_detach(send_tid);

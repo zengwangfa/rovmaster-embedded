@@ -26,7 +26,7 @@ all:
 	@cp ./user/rovmaster .
 	
 	# 生成反汇编
-	# @objdump  -d rovmaster > rovmaster.dis
+	@arm-linux-gnueabihf-objdump  -d rovmaster > rovmaster.dis
 
 	# 打印提示信息
 	@echo "\033[35m[$(ctime)] make success > rovmaster,run:\033[0m" 

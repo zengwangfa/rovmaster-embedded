@@ -11,12 +11,12 @@
 #include "data.h"
 #include "pwmDevices.h"
 
-#include <elog.h>
+
 #include <pthread.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <wiringPi.h>
+#include "wiringPi.h"
 
 static propellerParam_t propellerParam = {
     .pMax = 2000,  // 正向最大值 单位us
@@ -195,11 +195,11 @@ int pwmDevs_thread_init(void)
     if (fd < 0)
     {
         // 错误日志打印
-        ERROR_LOG(fd, "pca9685");
+        printf("pca9685 init failed");
         return -1;
     }
 
-    log_i("pca9685 init");
+    printf("pca9685 init");
     pthread_create(&pwm_tid, NULL, &pwmDevs_thread, NULL);
     pthread_detach(pwm_tid);
 

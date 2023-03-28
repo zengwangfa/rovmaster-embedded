@@ -5,10 +5,10 @@
 
 #include "focus.h"
 #include "data.h"
-#include <elog.h>
+
 
 #include <pthread.h>
-#include <wiringPi.h>
+#include "wiringPi.h"
 #include <wiringSerial.h>
 
 
@@ -113,7 +113,7 @@ int focus_camera_thread_init(void)
     fd = serialOpen(FOCUS_CAMERA_UART_DEV, 115200);
     if (fd < 0)
     {
-        log_e("focus camera uart init failed");
+        printf("focus camera uart init failed");
         return -1;
     }
     focus_zoom_camera_control(&focus_cam_step_angle); // 发送设定步进角度 变焦控制器是否存在
@@ -127,12 +127,12 @@ int focus_camera_thread_init(void)
     if (is_ok)
     {
         is_ok = 0; //清零
-        log_i("focus camera init");
+        printf("focus camera init");
         pthread_create(&focus_tid, NULL, &focus_camera_thread, NULL);
         pthread_detach(focus_tid);
     }
     else
-        log_e("focus camera init failed");
+        printf("focus camera init failed");
 
     return 0;
 }

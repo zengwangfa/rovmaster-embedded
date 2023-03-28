@@ -11,7 +11,7 @@
 #include "server.h"
 #include "system.h"
 
-#include <elog.h>
+
 #include <pthread.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -75,7 +75,7 @@ void *record_sys_status_thread(void *arg)
     sleep(5); // 等待系统稳定
     while (1)
     {
-        log_d("%d record sys status", cnt++);
+        printf("%d record sys status", cnt++);
         sleep(60 * 20); // 20分钟
     }
 }

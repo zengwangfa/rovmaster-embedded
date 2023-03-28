@@ -9,13 +9,13 @@
 
 #include "ms5837.h"
 
-#include <elog.h>
+
 #include <errno.h>
 #include <math.h>
 #include <pthread.h>
 #include <stdio.h>
 
-#include <wiringPi.h>
+#include "wiringPi.h"
 #include <wiringPiI2C.h>
 
 static ms5837_t ms5837;
@@ -226,7 +226,7 @@ static int myDigitalRead(struct wiringPiNodeStruct *node, int pin)
         return (int)(ms5837.pressure * 100); // 转换单位为Pa
     }
 
-    log_e("ms5837 channel range in [0, 1]");
+    printf("ms5837 channel range in [0, 1]");
     return -1;
 }
 

@@ -41,6 +41,8 @@
 *.su
 *.idb
 *.pdb
+rovmaster
+rovmaster.dis
 
 # Kernel Module Compile Results
 *.mod*
