@@ -86,7 +86,7 @@ void *depthSensor_thread(void *arg)
     // 如果初始压力值与标准大气压相差 20kPa，重新初始化获取(3次重新初始化)     // 101325-20000 ≈ 80000(大约1800m)
     while ((abs(depthSensor->init_pressure - STANDARD_ATMOSPHERIC_PRESSURE) > 20000) && (cnt++ < 3))
     {
-        printf("depth sensor error, trying init it again...");
+        printf("depth sensor error, trying init it again...\n");
         depthSensor->pin += 2;                                      // 原始的pin_base编号舍去，使用+2
         depthSensor_detect(depthSensor->pin);                       // 重新初始化
         depthSensor->init_pressure = digitalRead(depthSensor->pin); // 重新获取初始压力
@@ -185,9 +185,9 @@ int sensor_thread_init(void)
         fd = depthSensor_detect(DEPTH_SENSOR_PIN_BASE);
 
         if (fd < 0 && cnt == 1) // 第1次无法检测到，打印警告信息
-            printf("depth sensor cannot detected, trying init it again...");
+            printf("depth sensor cannot detected, trying init it again...\n");
         else if (fd < 0 && cnt == 0) // 第2次无法检测到，打印错误信息
-            printf("depth sersor init failed");
+            printf("depth sersor init failed\n");
         else
         {
             printf("%s init", depthSensor->name);

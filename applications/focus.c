@@ -51,8 +51,6 @@ void focus_zoom_camera_control(uint8_t *action)
         }
         // 计算校验位
         camera_control_data[5] = calculate_check_sum(camera_control_data, sizeof(camera_control_data) - 1);
-        for (int i = 0; i < 6; i++)
-            printf("%d ", camera_control_data[i]);
         write(fd, camera_control_data, sizeof(camera_control_data));
         *action = 0x00;
     }

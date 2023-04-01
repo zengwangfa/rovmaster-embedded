@@ -48,7 +48,7 @@ void *test_printf(void *arg)
 {
     while (1)
     {
-        static int i;
+        // static int i;
         // printf("propeller->leftUp %d \n",rovdev.propellerPower.leftUp);
         // printf("propeller->rightUp %d \n",rovdev.propellerPower.rightUp);
         // printf("propeller->leftDown %d \n",rovdev.propellerPower.leftDown);
@@ -60,10 +60,10 @@ void *test_printf(void *arg)
         // printf("FeedBack %f \n",Total_Controller.Yaw_Angle_Control.FeedBack);
         // printf("roll %f \n",rovInfo.jy901.roll);
         // printf("pitch %f \n",rovInfo.jy901.pitch);
-        for ( i = 0; i < 6; i++)
-        {
-            printf("control_data[%d] %d \n",i,camera_control_data[i]);
-        }
+        // for ( i = 0; i < 6; i++)
+        // {
+        //     printf("control_data[%d] %d \n",i,camera_control_data[i]);
+        // }
         
         printf("camera %d \n",cmd_data.camera);
         printf("ms5837 %lf \n",rovInfo.depthSensor.depth);
