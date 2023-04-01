@@ -192,6 +192,6 @@ int ioDevs_thread_init(void)
     pthread_create(&buttons_tid, NULL, button_thread, NULL);
     pthread_detach(buttons_tid);
 
-    printf("ioDevs  init");
+    printf("ioDevs  init\n");
     return 0;
 }

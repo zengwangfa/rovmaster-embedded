@@ -16,6 +16,9 @@ all:
 	# 删除目标文件，为了生成新的目标
 	rm -f user/rovmaster
 
+	@make -C ./lib/WiringNP/wiringPi static
+	cp ./lib/WiringNP/wiringPi/libwiringPi.a ./lib/
+
 	# make -C:进入指定的目录下执行make命令，命令前加了@即不会打印命令本身
 	@$(foreach N,$(dirs),make -C $(N);)
 

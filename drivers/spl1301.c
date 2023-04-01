@@ -315,7 +315,7 @@ static int myDigitalRead(struct wiringPiNodeStruct *node, int pin)
         return (spl1301.temperature * 100); // 扩大100倍，方便int类型传输
     else
     {
-        printf("spl1301 channel range in [0, 1]");
+        printf("spl1301 channel range in [0, 1]\n");
         return -1;
     }
 }

@@ -65,8 +65,8 @@ void *test_printf(void *arg)
         //     printf("control_data[%d] %d \n",i,camera_control_data[i]);
         // }
         
-        printf("camera %d \n",cmd_data.camera);
-        printf("ms5837 %lf \n",rovInfo.depthSensor.depth);
+        //printf("camera %d \n",cmd_data.camera);
+        //printf("ms5837 %lf \n",rovInfo.depthSensor.depth);
         // printf("depth %f \n",rovInfo.depthSensor.depth);
         // printf("acc %f \n",rovInfo.jy901.acc.x);
         // printf("Expect %f \n",Total_Controller.Location_X_Control.Expect);
@@ -94,6 +94,6 @@ int propeller_thread_init(void)
     pthread_create(&propeller_tid1, NULL, &test_printf, NULL);
     pthread_detach(propeller_tid1);
 
-    printf("propeller controller init");
+    printf("propeller controller init\n");
     return 0;
 }

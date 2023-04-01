@@ -111,7 +111,7 @@ int focus_camera_thread_init(void)
     fd = serialOpen(FOCUS_CAMERA_UART_DEV, 115200);
     if (fd < 0)
     {
-        printf("focus camera uart init failed");
+        printf("focus camera uart init failed\n");
         return -1;
     }
     focus_zoom_camera_control(&focus_cam_step_angle); // 发送设定步进角度 变焦控制器是否存在
@@ -125,12 +125,12 @@ int focus_camera_thread_init(void)
     if (is_ok)
     {
         is_ok = 0; //清零
-        printf("focus camera init");
+        printf("focus camera init\n");
         pthread_create(&focus_tid, NULL, &focus_camera_thread, NULL);
         pthread_detach(focus_tid);
     }
     else
-        printf("focus camera init failed");
+        printf("focus camera init failed\n");
 
     return 0;
 }

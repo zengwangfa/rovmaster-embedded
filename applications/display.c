@@ -90,11 +90,11 @@ int display_thread_init(void)
     if (fd < 0)
     {
         // 错误日志打印
-        printf("oled init failed");
+        printf("oled init failed\n");
         return -1;
     }
 
-    printf("oled init");
+    printf("oled init\n");
     pthread_create(&display_tid, NULL, &display_thread, NULL);
     pthread_detach(display_tid);
 

@@ -67,9 +67,20 @@ $ ./compile.sh
 ```
 
 ### 2.3.3 交叉编译
+
 ```bash
+# ubuntu 64安装交叉编译工具链
+sudo apt-get install gcc-arm-linux-gnueabihf
+
+# 编译
+make
+
 # ubuntu 上编译出来，通过scp传到nano-pi上
 scp ./rovmaster root@192.168.31.213:/root/
+
+#nano-pi 同步中国时间
+sudo timedatectl set-timezone Asia/Shanghai
+sudo timedatectl set-ntp true
 ```
 
 ### 2.3.3 视频推流

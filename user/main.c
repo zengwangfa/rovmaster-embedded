@@ -32,7 +32,7 @@ void *mjpg_streamer_thread(void *arg)
 
 void pirnf_menu(void)
 {
-    printf("1. set arm");
+    printf("1. set arm\n");
 }
 
 static void help(char *progname)
@@ -72,7 +72,7 @@ static void switch_menu(char *buf)
     {
 
         if (strncmp(buf, "help", len) == 0) // 帮助信息
-            help("rov-master");
+            help("rov-master\n");
         else if (strncmp(buf, "light", len) == 0)
             printf_pwmDev_info(&rovdev.light);
         else if (strncmp(buf, "yuntai", len) == 0)
@@ -82,7 +82,7 @@ static void switch_menu(char *buf)
         else if (strncmp(buf, "rovinfo", len) == 0)
             printf_rovinfo();
         else
-            printf("input error, you can enter \"help\" to list cmds");
+            printf("input error, you can enter \"help\" to list cmds\n");
     }
     // 遍历param文件，根据 空格分割符，查找参数名，从而读取参数
     // TODO 写入文件后，提醒文件读取参数

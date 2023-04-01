@@ -80,7 +80,7 @@ static void *server_thread(void *arg)
 
     // 1.创建UDP socket
     if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) // SOCK_DGRAM:数据报协议
-        perror("socket error");
+        perror("socket error\n");
 
     // 2.设置端口及IP
     bzero(&serverAddr, sizeof(serverAddr));
@@ -90,13 +90,13 @@ static void *server_thread(void *arg)
 
     // 3.绑定IP及端口
     if (bind(sockfd, (struct sockaddr *)&serverAddr, sizeof(serverAddr)))
-        perror("bind error");
+        perror("bind error\n");
 
     // 4.等待客户端发送数据，获取客户端信息后，才能进行通信
     if (recvfrom(sockfd, mesg, sizeof(mesg), 0, (struct sockaddr *)&clientAddr, &addrLen) < 0)
-        perror("recvfrom error");
+        perror("recvfrom error\n");
 
-    printf("ano link [%s:%d]", inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port)); // 打印消息发送方的IP与PORT
+    printf("ano link [%s:%d]\n", inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port)); // 打印消息发送方的IP与PORT
 
     pthread_create(&send_tid, NULL, ano_send_thread, NULL);
     pthread_detach(send_tid);

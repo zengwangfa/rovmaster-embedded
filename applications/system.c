@@ -11,10 +11,10 @@
 #include "server.h"
 #include "system.h"
 
-
 #include <pthread.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <sys/time.h>
 
 /*******************************************************************************************************************/
 //
@@ -67,16 +67,23 @@ void *mem_disk_status_thread(void *arg)
 }
 
 /**
-  * @brief  记录系统状态线程(20分钟1次)
+  * @brief  记录系统状态线程
   */
 void *record_sys_status_thread(void *arg)
 {
-    static uint16_t cnt;
+    struct timeval tv;
+    struct tm *tm_info;
+    char time_str[26];
+
     sleep(5); // 等待系统稳定
     while (1)
     {
-        printf("%d record sys status", cnt++);
-        sleep(60 * 20); // 20分钟
+        gettimeofday(&tv, NULL);
+        tm_info = localtime(&tv.tv_sec);
+        strftime(time_str, sizeof(time_str), "%Y-%m-%d %H:%M:%S", tm_info);
+        printf("current time is: %s.%03ld\n", time_str, tv.tv_usec);
+
+        sleep(10); // 20分钟
     }
 }
 

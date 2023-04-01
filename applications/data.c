@@ -36,13 +36,13 @@ void rov_all_params_init(void)
     {
         Total_PID_Init(); 
         read_rov_all_params();
-        printf("read rov params success...");
+        printf("read rov params success...\n");
     }
     else
     {
         Total_PID_Init();       // 初始化PID参数
         write_rov_all_params(); // 将初始化的参数写入文件
-        printf("create config file & write pid params success...");
+        printf("create config file & write pid params success...\n");
     }
 }
 

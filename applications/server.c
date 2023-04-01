@@ -160,7 +160,7 @@ void *server_thread(void *arg)
         /* 5.接受客户请求，并创建线程处理(可连续接收多个客户端，每个客户端创建2个线程进行处理) */
         if ((client_sock = accept(server_sock, (struct sockaddr *)&clientAddr, &addrLen)) < 0)
         {
-            printf("accept socket error:%s(errorno:%d)", strerror(errno), errno);
+            printf("accept socket error:%s(errorno:%d)\n", strerror(errno), errno);
 
             continue;
         }
@@ -168,7 +168,7 @@ void *server_thread(void *arg)
         strncpy(clientip, inet_ntoa(clientAddr.sin_addr), sizeof(clientip));
         // 打印客户端连接次数及IP地址
         
-        printf("conneted success from clinet [NO.%d] IP: [%s]", ++clientCnt, clientip);
+        printf("conneted success from clinet [NO.%d] IP: [%s]\n", ++clientCnt, clientip);
 
         pthread_create(&send_tid, NULL, send_thread, clientip);
         pthread_detach(send_tid);

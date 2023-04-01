@@ -101,7 +101,7 @@ void *depthSensor_thread(void *arg)
         /* 如果压力值与上一次压力值相差 0.2个标准大气压，舍弃该数据 */
         if (flag && (abs(depthSensor->last_pressure - depthSensor->pressure) > (0.2 * STANDARD_ATMOSPHERIC_PRESSURE)))
         {
-            printf("%d", depthSensor->pressure);
+            printf("%d\n", depthSensor->pressure);
             depthSensor->pressure = depthSensor->last_pressure; // 使用上一次的数据
         }
         flag = 1; // 第一次不进行比较上一次的值
@@ -160,10 +160,10 @@ int sensor_thread_init(void)
     // ADS1118 ADC 初始化
     fd = ads1118Setup(ADS1118_PIN_BASE);
     if (fd < 0) // 先判断设备是否存在，不存在不创建对应线程
-        printf("ads1118 init failed");
+        printf("ads1118 init failed\n");
     else
     {
-        printf("ads1118 init");
+        printf("ads1118 init\n");
         pthread_create(&adc_tid, NULL, adc_thread, NULL);
         pthread_detach(adc_tid);
     }
@@ -171,10 +171,10 @@ int sensor_thread_init(void)
     // JY901 九轴 初始化
     fd = jy901Setup();
     if (fd < 0)
-        printf("jy901 init failed");
+        printf("jy901 init failed\n");
     else
     {   
-        printf("jy901   init");
+        printf("jy901   init\n");
         pthread_create(&jy901_tid, NULL, jy901_thread, &fd);
         pthread_detach(jy901_tid);
     }

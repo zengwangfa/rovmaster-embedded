@@ -191,7 +191,7 @@ int pca9685Setup(const int pinBase, float freq)
     wiringPiI2CWriteReg8(fd, PCA9685_MODE1, autoInc);
 
     if (freq < 40 || freq > 1000)
-        printf("pca9685 freq range in [40, 1000]");
+        printf("pca9685 freq range in [40, 1000]\n");
 
     // 设置 PWM 频率，启动输出
     pca9685PWMSetFreq(fd, freq);

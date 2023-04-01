@@ -195,11 +195,11 @@ int pwmDevs_thread_init(void)
     if (fd < 0)
     {
         // 错误日志打印
-        printf("pca9685 init failed");
+        printf("pca9685 init failed\n");
         return -1;
     }
 
-    printf("pca9685 init");
+    printf("pca9685 init\n");
     pthread_create(&pwm_tid, NULL, &pwmDevs_thread, NULL);
     pthread_detach(pwm_tid);
 

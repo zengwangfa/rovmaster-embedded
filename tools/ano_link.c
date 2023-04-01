@@ -1,9 +1,9 @@
 /*
- * ÄäÃûµØÃæÕ¾Êý¾Ý´«Êä
+ * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õ¾ï¿½ï¿½ï¿½Ý´ï¿½ï¿½ï¿½
  *
- * Attention: ½ÓÊÕÖ»ÐèÒªµ÷ÓÃ -> ANO_DT_Data_Receive_Prepare(uint8_t data); »òÕß void ANO_DT_Data_Receive_Anl(uint8_t *data_buf, uint8_t num);
- *¡¾Í³Ò»½Ó¿Ú¡¿ ·¢ËÍÖ»ÐèÒªµ÷ÓÃ -> ANO_SEND_StateMachine(void);
- *            ±£´æ²ÎÊýÐèµ÷ÓÃ -> void Save_Or_Reset_PID_Parameter(void);
+ * Attention: ï¿½ï¿½ï¿½ï¿½Ö»ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ -> ANO_DT_Data_Receive_Prepare(uint8_t data); ï¿½ï¿½ï¿½ï¿½ void ANO_DT_Data_Receive_Anl(uint8_t *data_buf, uint8_t num);
+ *ï¿½ï¿½Í³Ò»ï¿½Ó¿Ú¡ï¿½ ï¿½ï¿½ï¿½ï¿½Ö»ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ -> ANO_SEND_StateMachine(void);
+ *            ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ -> void Save_Or_Reset_PID_Parameter(void);
  */
 
 #include "ano_link.h"
@@ -23,31 +23,31 @@
 #define BYTE2(dwTemp) (*((char *)(&dwTemp) + 2))
 #define BYTE3(dwTemp) (*((char *)(&dwTemp) + 3))
 
-#define HardwareType 0.00 // Ó²¼þÖÖÀà  00ÎªÆäËûÓ²¼þ°æ±¾
-#define HardwareVER 1.00  // Ó²¼þ°æ±¾
-#define SoftwareVER 1.00  // Èí¼þ°æ±¾
-#define ProtocolVER 1     // Ð­Òé°æ±¾
-#define BootloaderVER 1   // Bootloader°æ±¾
+#define HardwareType 0.00 // Ó²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  00Îªï¿½ï¿½ï¿½ï¿½Ó²ï¿½ï¿½ï¿½æ±¾
+#define HardwareVER 1.00  // Ó²ï¿½ï¿½ï¿½æ±¾
+#define SoftwareVER 1.00  // ï¿½ï¿½ï¿½ï¿½ï¿½æ±¾
+#define ProtocolVER 1     // Ð­ï¿½ï¿½æ±¾
+#define BootloaderVER 1   // Bootloaderï¿½æ±¾
 
 Vector3f_pid PID_Parameter[8] = {0};
 
-uint8_t data_to_send[50];  // ANOµØÃæÕ¾·¢ËÍÊý¾Ý»º³å
-uint8_t ANO_Send_PID_Flag; // PID·¢ËÍ±êÖ¾Î»
+uint8_t data_to_send[50];  // ANOï¿½ï¿½ï¿½ï¿½Õ¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý»ï¿½ï¿½ï¿½
+uint8_t ANO_Send_PID_Flag; // PIDï¿½ï¿½ï¿½Í±ï¿½Ö¾Î»
 void ANO_DT_Send_All_PID(void);
-//Send_Dataº¯ÊýÊÇÐ­ÒéÖÐËùÓÐ·¢ËÍÊý¾Ý¹¦ÄÜÊ¹ÓÃµ½µÄ·¢ËÍº¯Êý
-//ÒÆÖ²Ê±£¬ÓÃ»§Ó¦¸ù¾Ý×ÔÉíÓ¦ÓÃµÄÇé¿ö£¬¸ù¾ÝÊ¹ÓÃµÄÍ¨ÐÅ·½Ê½£¬ÊµÏÖ´Ëº¯Êý
+//Send_Dataï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý¹ï¿½ï¿½ï¿½Ê¹ï¿½Ãµï¿½ï¿½Ä·ï¿½ï¿½Íºï¿½ï¿½ï¿½
+//ï¿½ï¿½Ö²Ê±ï¿½ï¿½ï¿½Ã»ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½Ãµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½Ãµï¿½Í¨ï¿½Å·ï¿½Ê½ï¿½ï¿½Êµï¿½Ö´Ëºï¿½ï¿½ï¿½
 void ANO_DT_Send_Data(uint8_t *dataToSend, uint8_t len)
 {
     ano_udp_send(dataToSend, len);
 }
 /*******************************************
-* º¯ Êý Ãû£ºANO_DT_Data_Receive_Prepare
-* ¹¦    ÄÜ£ºANOµØÃæÕ¾Êý¾Ý½âÎö
-* ÊäÈë²ÎÊý£º´®¿ÚÑ­»·´«ÈëµÄÒ»¸öÊý¾Ýdata
-* ·µ »Ø Öµ£ºnone
-* ×¢    Òâ£ºnone
+* ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ANO_DT_Data_Receive_Prepare
+* ï¿½ï¿½    ï¿½Ü£ï¿½ANOï¿½ï¿½ï¿½ï¿½Õ¾ï¿½ï¿½ï¿½Ý½ï¿½ï¿½ï¿½
+* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½data
+* ï¿½ï¿½ ï¿½ï¿½ Öµï¿½ï¿½none
+* ×¢    ï¿½â£ºnone
 ********************************************/
-void ANO_DT_Data_Receive_Prepare(uint8_t data) //ANOµØÃæÕ¾Êý¾Ý½âÎö
+void ANO_DT_Data_Receive_Prepare(uint8_t data) //ANOï¿½ï¿½ï¿½ï¿½Õ¾ï¿½ï¿½ï¿½Ý½ï¿½ï¿½ï¿½
 {
 
     static uint8_t RxBuffer[50];
@@ -64,42 +64,42 @@ void ANO_DT_Data_Receive_Prepare(uint8_t data) //ANOµØÃæÕ¾Êý¾Ý½âÎö
         state = 2;
         RxBuffer[1] = data;
     }
-    else if (state == 2 && data < 0XF1) //¹¦ÄÜ×Ö½Ú
+    else if (state == 2 && data < 0XF1) //ï¿½ï¿½ï¿½ï¿½ï¿½Ö½ï¿½
     {
         state = 3;
         RxBuffer[2] = data;
     }
-    else if (state == 3 && data < 50) //ÓÐÐ§Êý¾Ý³¤¶È
+    else if (state == 3 && data < 50) //ï¿½ï¿½Ð§ï¿½ï¿½ï¿½Ý³ï¿½ï¿½ï¿½
     {
         state = 4;
         RxBuffer[3] = data;
         _data_len = data;
         _data_cnt = 0;
     }
-    else if (state == 4 && _data_len > 0) //Êý¾Ý½ÓÊÕ
+    else if (state == 4 && _data_len > 0) //ï¿½ï¿½ï¿½Ý½ï¿½ï¿½ï¿½
     {
         _data_len--;
         RxBuffer[4 + _data_cnt++] = data;
         if (_data_len == 0)
             state = 5;
     }
-    else if (state == 5) //Ð£ÑéºÍ
+    else if (state == 5) //Ð£ï¿½ï¿½ï¿½
     {
         state = 0;
         RxBuffer[4 + _data_cnt] = data;
-        ANO_DT_Data_Receive_Anl(RxBuffer, _data_cnt + 5); //Êý¾Ý½âÎö
+        ANO_DT_Data_Receive_Anl(RxBuffer, _data_cnt + 5); //ï¿½ï¿½ï¿½Ý½ï¿½ï¿½ï¿½
     }
     else
         state = 0;
 }
 
 /*******************************************
-* º¯ Êý Ãû£ºANO_DT_Send_Check
-* ¹¦    ÄÜ£ºANOµØÃæÕ¾ºÍÐ£Ñé
-* ÊäÈë²ÎÊý£ºhead ¹¦ÄÜ×Ö
-						check_num Ð£ÑéºÍ
-* ·µ »Ø Öµ£ºnone
-* ×¢    Òâ£ºnone
+* ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ANO_DT_Send_Check
+* ï¿½ï¿½    ï¿½Ü£ï¿½ANOï¿½ï¿½ï¿½ï¿½Õ¾ï¿½ï¿½Ð£ï¿½ï¿½
+* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½head ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+						check_num Ð£ï¿½ï¿½ï¿½
+* ï¿½ï¿½ ï¿½ï¿½ Öµï¿½ï¿½none
+* ×¢    ï¿½â£ºnone
 ********************************************/
 static void ANO_DT_Send_Check(uint8_t head, uint8_t check_sum)
 {
@@ -120,12 +120,12 @@ static void ANO_DT_Send_Check(uint8_t head, uint8_t check_sum)
 }
 
 /*******************************************
-* º¯ Êý Ãû£ºANO_DT_Data_Receive_Anl
-* ¹¦    ÄÜ£ºANOÊý¾Ý½âÎö
-* ÊäÈë²ÎÊý£ºdata_buf: Êý¾Ý°ü
-						num: Êý¾Ý°ü´óÐ¡
-* ·µ »Ø Öµ£ºnone
-* ×¢    Òâ£ºnone
+* ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ANO_DT_Data_Receive_Anl
+* ï¿½ï¿½    ï¿½Ü£ï¿½ANOï¿½ï¿½ï¿½Ý½ï¿½ï¿½ï¿½
+* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½data_buf: ï¿½ï¿½ï¿½Ý°ï¿½
+						num: ï¿½ï¿½ï¿½Ý°ï¿½ï¿½ï¿½Ð¡
+* ï¿½ï¿½ ï¿½ï¿½ Öµï¿½ï¿½none
+* ×¢    ï¿½â£ºnone
 ********************************************/
 void ANO_DT_Data_Receive_Anl(uint8_t *data_buf, uint8_t num)
 {
@@ -133,9 +133,9 @@ void ANO_DT_Data_Receive_Anl(uint8_t *data_buf, uint8_t num)
     for (i = 0; i < (num - 1); i++)
         sum += *(data_buf + i);
     if (!(sum == *(data_buf + num - 1)))
-        return; //ÅÐ¶Ïsum
+        return; //ï¿½Ð¶ï¿½sum
     if (!(*(data_buf) == 0xAA && *(data_buf + 1) == 0xAF))
-        return; //ÅÐ¶ÏÖ¡Í·
+        return; //ï¿½Ð¶ï¿½Ö¡Í·
     if (*(data_buf + 2) == 0x01)
     {
         if (*(data_buf + 4) == 0x01) // ACCÐ£×¼
@@ -151,25 +151,25 @@ void ANO_DT_Data_Receive_Anl(uint8_t *data_buf, uint8_t num)
 
     if (*(data_buf + 2) == 0x02)
     {
-        if (*(data_buf + 4) == 0x01) //¶ÁÈ¡µ±Ç°PID²ÎÊý
+        if (*(data_buf + 4) == 0x01) //ï¿½ï¿½È¡ï¿½ï¿½Ç°PIDï¿½ï¿½ï¿½ï¿½
         {
             ANO_Send_PID_Flag = 1;
         }
-        if (*(data_buf + 4) == 0x02) //¶ÁÈ¡·ÉÐÐÄ£Ê½ÉèÖÃÇëÇó
+        if (*(data_buf + 4) == 0x02) //ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½Ä£Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         {
         }
-        if (*(data_buf + 4) == 0xA0) //¶ÁÈ¡ÏÂÎ»»ú°æ±¾ÐÅÏ¢
+        if (*(data_buf + 4) == 0xA0) //ï¿½ï¿½È¡ï¿½ï¿½Î»ï¿½ï¿½ï¿½æ±¾ï¿½ï¿½Ï¢
         {
         }
-        if (*(data_buf + 4) == 0xA1) //»Ö¸´Ä¬ÈÏ²ÎÊý
+        if (*(data_buf + 4) == 0xA1) //ï¿½Ö¸ï¿½Ä¬ï¿½Ï²ï¿½ï¿½ï¿½
         {
-            Total_PID_Init();       // ½«PID²ÎÊýÖØÖÃÎª²ÎÊýControl_Unit±íÀïÃæ²ÎÊý
-            write_rov_all_params(); // Ð´ÈëPID²ÎÊý
-            printf("reset pid params -> Success!");
+            Total_PID_Init();       // ï¿½ï¿½PIDï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½Control_Unitï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            write_rov_all_params(); // Ð´ï¿½ï¿½PIDï¿½ï¿½ï¿½ï¿½
+            printf("reset pid params -> Success!\n");
         }
     }
 
-    if (*(data_buf + 2) == 0x10) //½ÓÊÕPID1
+    if (*(data_buf + 2) == 0x10) //ï¿½ï¿½ï¿½ï¿½PID1
     {
         Total_Controller.Roll_Gyro_Control.Kp = 0.001 * ((int16_t)(*(data_buf + 4) << 8) | *(data_buf + 5));
         Total_Controller.Roll_Gyro_Control.Ki = 0.001 * ((int16_t)(*(data_buf + 6) << 8) | *(data_buf + 7));
@@ -182,7 +182,7 @@ void ANO_DT_Data_Receive_Anl(uint8_t *data_buf, uint8_t num)
         Total_Controller.Yaw_Gyro_Control.Kd = 0.001 * ((int16_t)(*(data_buf + 20) << 8) | *(data_buf + 21));
         ANO_DT_Send_Check(*(data_buf + 2), sum);
     }
-    if (*(data_buf + 2) == 0x11) //½ÓÊÕPID2
+    if (*(data_buf + 2) == 0x11) //ï¿½ï¿½ï¿½ï¿½PID2
     {
         Total_Controller.Roll_Angle_Control.Kp = 0.001 * ((int16_t)(*(data_buf + 4) << 8) | *(data_buf + 5));
         Total_Controller.Roll_Angle_Control.Ki = 0.001 * ((int16_t)(*(data_buf + 6) << 8) | *(data_buf + 7));
@@ -195,7 +195,7 @@ void ANO_DT_Data_Receive_Anl(uint8_t *data_buf, uint8_t num)
         Total_Controller.Yaw_Angle_Control.Kd = 0.001 * ((int16_t)(*(data_buf + 20) << 8) | *(data_buf + 21));
         ANO_DT_Send_Check(*(data_buf + 2), sum);
     }
-    if (*(data_buf + 2) == 0x12) //½ÓÊÕPID3
+    if (*(data_buf + 2) == 0x12) //ï¿½ï¿½ï¿½ï¿½PID3
     {
         Total_Controller.High_Speed_Control.Kp = 0.001 * ((int16_t)(*(data_buf + 4) << 8) | *(data_buf + 5));
         Total_Controller.High_Speed_Control.Ki = 0.001 * ((int16_t)(*(data_buf + 6) << 8) | *(data_buf + 7));
@@ -212,20 +212,20 @@ void ANO_DT_Data_Receive_Anl(uint8_t *data_buf, uint8_t num)
         Total_Controller.Location_Y_Control.Kd = 0.001 * ((int16_t)(*(data_buf + 26) << 8) | *(data_buf + 27));
         ANO_DT_Send_Check(*(data_buf + 2), sum);
     }
-    if (*(data_buf + 2) == 0x13) //½ÓÊÕPID4
+    if (*(data_buf + 2) == 0x13) //ï¿½ï¿½ï¿½ï¿½PID4
     {
         ANO_DT_Send_Check(*(data_buf + 2), sum);
     }
-    if (*(data_buf + 2) == 0x14) //½ÓÊÕPID5 ¡¾¸ÄÎªÍÆ½øÆ÷·½Ïò±êÖ¾¡¿
+    if (*(data_buf + 2) == 0x14) //ï¿½ï¿½ï¿½ï¿½PID5 ï¿½ï¿½ï¿½ï¿½Îªï¿½Æ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¾ï¿½ï¿½
     {
 
         ANO_DT_Send_Check(*(data_buf + 2), sum);
     }
-    if (*(data_buf + 2) == 0x15) //½ÓÊÕPID6  (¹¦ÄÜ¸ÄÎª£º Ì½ÕÕµÆ¡¢ÔÆÌ¨¡¢»úÐµ±Û²ÎÊý½ÓÊÕ)
+    if (*(data_buf + 2) == 0x15) //ï¿½ï¿½ï¿½ï¿½PID6  (ï¿½ï¿½ï¿½Ü¸ï¿½Îªï¿½ï¿½ Ì½ï¿½ÕµÆ¡ï¿½ï¿½ï¿½Ì¨ï¿½ï¿½ï¿½ï¿½Ðµï¿½Û²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)
     {
-        rovdev.light.nMax = (int16_t)(*(data_buf + 4) << 8) | *(data_buf + 5);  // ·´Ïò×î´óÖµ
-        rovdev.light.pMax = (int16_t)(*(data_buf + 6) << 8) | *(data_buf + 7);  // ÕýÏò×î´óÖµ
-        rovdev.light.speed = (int16_t)(*(data_buf + 8) << 8) | *(data_buf + 9); // ËÙ¶È
+        rovdev.light.nMax = (int16_t)(*(data_buf + 4) << 8) | *(data_buf + 5);  // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµ
+        rovdev.light.pMax = (int16_t)(*(data_buf + 6) << 8) | *(data_buf + 7);  // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµ
+        rovdev.light.speed = (int16_t)(*(data_buf + 8) << 8) | *(data_buf + 9); // ï¿½Ù¶ï¿½
 
         rovdev.yuntai.nMax = (int16_t)(*(data_buf + 10) << 8) | *(data_buf + 11);
         rovdev.yuntai.pMax = (int16_t)(*(data_buf + 12) << 8) | *(data_buf + 13);
@@ -237,21 +237,21 @@ void ANO_DT_Data_Receive_Anl(uint8_t *data_buf, uint8_t num)
         rovdev.robot_arm.speed = (int16_t)(*(data_buf + 20) << 8) | *(data_buf + 21);
         rovdev.robot_arm.med = (rovdev.robot_arm.nMax + rovdev.robot_arm.pMax) / 2;
 
-        write_rov_all_params(); // Ð´ÈëPID²ÎÊý
-        printf("write pid params -> success!");
+        write_rov_all_params(); // Ð´ï¿½ï¿½PIDï¿½ï¿½ï¿½ï¿½
+        printf("write pid params -> success!\n");
         ANO_DT_Send_Check(*(data_buf + 2), sum);
     }
 }
 
-//---------------ÕâÀïÊÇ·Ö¸ô·û¡ý¡ý¡ý¡ý¡ý¡ý¡ý¡ý¡ý¡ý<ÒÔÏÂÎª·¢ËÍ ×Óº¯Êý>¡ý¡ý¡ý¡ý¡ý¡ý¡ý¡ý¡ý¡ýÕâÀïÊÇ·Ö¸ô·û------------------//
+//---------------ï¿½ï¿½ï¿½ï¿½ï¿½Ç·Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½<ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ ï¿½Óºï¿½ï¿½ï¿½>ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·Ö¸ï¿½ï¿½ï¿½------------------//
 /*******************************************
-* º¯ Êý Ãû£ºANO_Data_Send_Version
-* ¹¦    ÄÜ£º·¢ËÍ»ù±¾°æ±¾ÐÅÏ¢£¨Ó²¼þÖÖÀà¡¢Ó²¼þ¡¢Èí¼þ¡¢Ð­Òé¡¢Bootloader°æ±¾£©¡¾µÚÒ»×é¡¿
-* ÊäÈë²ÎÊý£ºnone
-* ·µ »Ø Öµ£ºnone
-* ×¢    Òâ£ºnone
+* ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ANO_Data_Send_Version
+* ï¿½ï¿½    ï¿½Ü£ï¿½ï¿½ï¿½ï¿½Í»ï¿½ï¿½ï¿½ï¿½æ±¾ï¿½ï¿½Ï¢ï¿½ï¿½Ó²ï¿½ï¿½ï¿½ï¿½ï¿½à¡¢Ó²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð­ï¿½é¡¢Bootloaderï¿½æ±¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½é¡¿
+* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½none
+* ï¿½ï¿½ ï¿½ï¿½ Öµï¿½ï¿½none
+* ×¢    ï¿½â£ºnone
 ********************************************/
-void ANO_Data_Send_Version(int hardwareType, int hardwareVER, int softwareVER, int protocolVER, int bootloaderVER) //·¢ËÍ°æ±¾ÐÅÏ¢
+void ANO_Data_Send_Version(int hardwareType, int hardwareVER, int softwareVER, int protocolVER, int bootloaderVER) //ï¿½ï¿½ï¿½Í°æ±¾ï¿½ï¿½Ï¢
 {
     uint8_t _cnt = 0;
     int16_t _temp;
@@ -291,13 +291,13 @@ void ANO_Data_Send_Version(int hardwareType, int hardwareVER, int softwareVER, i
     ANO_DT_Send_Data(data_to_send, _cnt);
 }
 /*******************************************
-* º¯ Êý Ãû£ºANO_Data_Send_Status
-* ¹¦    ÄÜ£º·¢ËÍ»ù±¾ÐÅÏ¢£¨Å·À­Èý½Ç¡¢¸ß¶È¡¢Ëø¶¨×´Ì¬£©¡¾µÚ¶þ×é¡¿
-* ÊäÈë²ÎÊý£ºnone
-* ·µ »Ø Öµ£ºnone
-* ×¢    Òâ£ºnone
+* ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ANO_Data_Send_Status
+* ï¿½ï¿½    ï¿½Ü£ï¿½ï¿½ï¿½ï¿½Í»ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½Å·ï¿½ï¿½ï¿½ï¿½ï¿½Ç¡ï¿½ï¿½ß¶È¡ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½Ú¶ï¿½ï¿½é¡¿
+* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½none
+* ï¿½ï¿½ ï¿½ï¿½ Öµï¿½ï¿½none
+* ×¢    ï¿½â£ºnone
 ********************************************/
-void ANO_Data_Send_Status(float roll, float pitch, float yaw, float depth) //·¢ËÍ»ù±¾ÐÅÏ¢£¨×ËÌ¬¡¢Ëø¶¨×´Ì¬£©
+void ANO_Data_Send_Status(float roll, float pitch, float yaw, float depth) //ï¿½ï¿½ï¿½Í»ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½
 {
     uint8_t _cnt = 0;
     int16_t _temp;
@@ -319,14 +319,14 @@ void ANO_Data_Send_Status(float roll, float pitch, float yaw, float depth) //·¢Ë
     data_to_send[_cnt++] = BYTE1(_temp);
     data_to_send[_cnt++] = BYTE0(_temp);
 
-    _temp2 = (int)(depth * 100); // µ¥Î»cm
+    _temp2 = (int)(depth * 100); // ï¿½ï¿½Î»cm
     data_to_send[_cnt++] = BYTE3(_temp2);
     data_to_send[_cnt++] = BYTE2(_temp2);
     data_to_send[_cnt++] = BYTE1(_temp2);
     data_to_send[_cnt++] = BYTE0(_temp2);
 
-    data_to_send[_cnt++] = 0x01; // ·ÉÐÐÄ£Ê½
-    data_to_send[_cnt++] = 0;    // 2 - ControlCmd.All_Lock; //¡¾ÄäÃû¡¿ÉÏËø0¡¢½âËø1   ×Ô¶¨ÒåÎª£º0x01½âËø£¬0x02ÉÏËø
+    data_to_send[_cnt++] = 0x01; // ï¿½ï¿½ï¿½ï¿½Ä£Ê½
+    data_to_send[_cnt++] = 0;    // 2 - ControlCmd.All_Lock; //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½0ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1   ï¿½Ô¶ï¿½ï¿½ï¿½Îªï¿½ï¿½0x01ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½0x02ï¿½ï¿½ï¿½ï¿½
 
     data_to_send[3] = _cnt - 4;
     sum = 0;
@@ -339,11 +339,11 @@ void ANO_Data_Send_Status(float roll, float pitch, float yaw, float depth) //·¢Ë
 }
 
 /*******************************************
-* º¯ Êý Ãû£ºANO_DT_Send_Senser
-* ¹¦    ÄÜ£º·¢ËÍ´«¸ÐÆ÷Ô­Ê¼Êý×ÖÁ¿ (¼ÓËÙ¶È¡¢½ÇËÙ¶È¡¢´Å³¡)  ¡¾µÚÈý×é¡¿
-* ÊäÈë²ÎÊý£º3×éÊý¾Ýx,y,zÖá
-* ·µ »Ø Öµ£ºnone
-* ×¢    Òâ£ºnone
+* ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ANO_DT_Send_Senser
+* ï¿½ï¿½    ï¿½Ü£ï¿½ï¿½ï¿½ï¿½Í´ï¿½ï¿½ï¿½ï¿½ï¿½Ô­Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½Ù¶È¡ï¿½ï¿½ï¿½ï¿½Ù¶È¡ï¿½ï¿½Å³ï¿½)  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½é¡¿
+* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½3ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½x,y,zï¿½ï¿½
+* ï¿½ï¿½ ï¿½ï¿½ Öµï¿½ï¿½none
+* ×¢    ï¿½â£ºnone
 ********************************************/
 void ANO_DT_Send_Senser(float a_x, float a_y, float a_z, float g_x, float g_y, float g_z, float m_x, float m_y, float m_z)
 {
@@ -399,11 +399,11 @@ void ANO_DT_Send_Senser(float a_x, float a_y, float a_z, float g_x, float g_y, f
 }
 
 /*******************************************
-* º¯ Êý Ãû£ºANO_DT_Send_High
-* ¹¦    ÄÜ£º·¢ËÍ¸ß¶ÈÊý¾Ý (ÆøÑ¹¼Æ¸ß¶È¡¢³¬Éù²¨¸ßµÍ)  ¡¾µÚÆß×é¡¿
-* ÊäÈë²ÎÊý£ºpressure_high£ºÆøÑ¹¼Æ¸ß¶È¡¢ultrasonic_high£º³¬Éù²¨¸ß¶È
-* ·µ »Ø Öµ£ºnone
-* ×¢    Òâ£ºnone
+* ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ANO_DT_Send_High
+* ï¿½ï¿½    ï¿½Ü£ï¿½ï¿½ï¿½ï¿½Í¸ß¶ï¿½ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½Ñ¹ï¿½Æ¸ß¶È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ßµï¿½)  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½é¡¿
+* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½pressure_highï¿½ï¿½ï¿½ï¿½Ñ¹ï¿½Æ¸ß¶È¡ï¿½ultrasonic_highï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß¶ï¿½
+* ï¿½ï¿½ ï¿½ï¿½ Öµï¿½ï¿½none
+* ×¢    ï¿½â£ºnone
 ********************************************/
 void ANO_DT_Send_High(int pressure_high, int ultrasonic_high)
 {
@@ -439,13 +439,13 @@ void ANO_DT_Send_High(int pressure_high, int ultrasonic_high)
 }
 
 /*******************************************
-* º¯ Êý Ãû£ºANO_DT_Send_PID
-* ¹¦    ÄÜ£º·¢ËÍPIDÊý¾Ý
-* ÊäÈë²ÎÊý£ºgroup:µÚ¼¸×éPIDÊý¾Ý
-						3×éPIDÊý¾Ýp,i,d
-* ·µ »Ø Öµ£ºnone
-* ×¢    Òâ£ºµÚÒ»×éPIDÊý¾Ý£ºgroup=1;
-						ÒÔ´ËÀàÍÆ
+* ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ANO_DT_Send_PID
+* ï¿½ï¿½    ï¿½Ü£ï¿½ï¿½ï¿½ï¿½ï¿½PIDï¿½ï¿½ï¿½ï¿½
+* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½group:ï¿½Ú¼ï¿½ï¿½ï¿½PIDï¿½ï¿½ï¿½ï¿½
+						3ï¿½ï¿½PIDï¿½ï¿½ï¿½ï¿½p,i,d
+* ï¿½ï¿½ ï¿½ï¿½ Öµï¿½ï¿½none
+* ×¢    ï¿½â£ºï¿½ï¿½Ò»ï¿½ï¿½PIDï¿½ï¿½ï¿½Ý£ï¿½group=1;
+						ï¿½Ô´ï¿½ï¿½ï¿½ï¿½ï¿½
 ********************************************/
 void ANO_DT_Send_PID(uint8_t group, float p1_p, float p1_i, float p1_d, float p2_p, float p2_i, float p2_d, float p3_p, float p3_i, float p3_d)
 {
@@ -497,7 +497,7 @@ void ANO_DT_Send_PID(uint8_t group, float p1_p, float p1_i, float p1_d, float p2
     ANO_DT_Send_Data(data_to_send, _cnt);
 }
 
-// ÒÔPIDÊý¾Ý·¢ËÍÆäËû²ÎÊý
+// ï¿½ï¿½PIDï¿½ï¿½ï¿½Ý·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 void ANO_DT_Send_Fake_PID(uint8_t group, float p1_p, float p1_i, float p1_d, float p2_p, float p2_i, float p2_d, float p3_p, float p3_i, float p3_d)
 {
     uint8_t _cnt = 0;
@@ -548,14 +548,14 @@ void ANO_DT_Send_Fake_PID(uint8_t group, float p1_p, float p1_i, float p1_d, flo
     ANO_DT_Send_Data(data_to_send, _cnt);
 }
 /*******************************************
-* º¯ Êý Ãû£ºANO_DT_Send_RCData
-* ¹¦    ÄÜ£º·¢ËÍPIDÊý¾Ý
-* ÊäÈë²ÎÊý£ºgroup:µÚ¼¸×éPIDÊý¾Ý
-						3×éPIDÊý¾Ýp,i,d
-* ·µ »Ø Öµ£ºnone
-* ×¢    Òâ£ºµÚÒ»×éPIDÊý¾Ý£ºgroup=1;
+* ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ANO_DT_Send_RCData
+* ï¿½ï¿½    ï¿½Ü£ï¿½ï¿½ï¿½ï¿½ï¿½PIDï¿½ï¿½ï¿½ï¿½
+* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½group:ï¿½Ú¼ï¿½ï¿½ï¿½PIDï¿½ï¿½ï¿½ï¿½
+						3ï¿½ï¿½PIDï¿½ï¿½ï¿½ï¿½p,i,d
+* ï¿½ï¿½ ï¿½ï¿½ Öµï¿½ï¿½none
+* ×¢    ï¿½â£ºï¿½ï¿½Ò»ï¿½ï¿½PIDï¿½ï¿½ï¿½Ý£ï¿½group=1;
 ********************************************/
-void ANO_DT_Send_RCData(uint16_t thr, uint16_t yaw, uint16_t rol, uint16_t pit, uint16_t aux1, uint16_t aux2, uint16_t aux3, uint16_t aux4, uint16_t aux5, uint16_t aux6) //·¢ËÍÒ£¿ØÆ÷Í¨µÀÊý¾Ý
+void ANO_DT_Send_RCData(uint16_t thr, uint16_t yaw, uint16_t rol, uint16_t pit, uint16_t aux1, uint16_t aux2, uint16_t aux3, uint16_t aux4, uint16_t aux5, uint16_t aux6) //ï¿½ï¿½ï¿½ï¿½Ò£ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 {
     uint8_t _cnt = 0;
     uint8_t i = 0;
@@ -596,11 +596,11 @@ void ANO_DT_Send_RCData(uint16_t thr, uint16_t yaw, uint16_t rol, uint16_t pit, 
 }
 
 /*******************************************
-* º¯ Êý Ãû£ºANO_Data_Send_Voltage_Current
-* ¹¦    ÄÜ£º·¢ËÍµçÑ¹¡¢µçÁ÷¡¾µÚ5×é¡¿
-* ÊäÈë²ÎÊý£ºµçÑ¹¡¢µçÁ÷
-* ·µ »Ø Öµ£ºnone
-* ×¢    Òâ£ºnone
+* ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ANO_Data_Send_Voltage_Current
+* ï¿½ï¿½    ï¿½Ü£ï¿½ï¿½ï¿½ï¿½Íµï¿½Ñ¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½5ï¿½é¡¿
+* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+* ï¿½ï¿½ ï¿½ï¿½ Öµï¿½ï¿½none
+* ×¢    ï¿½â£ºnone
 ********************************************/
 void ANO_Data_Send_Voltage_Current(float volatge, float current)
 {
@@ -614,11 +614,11 @@ void ANO_Data_Send_Voltage_Current(float volatge, float current)
     data_to_send[_cnt++] = 0x05;
     data_to_send[_cnt++] = 0;
 
-    _temp = (int)(volatge * 100); //µçÑ¹
+    _temp = (int)(volatge * 100); //ï¿½ï¿½Ñ¹
     data_to_send[_cnt++] = BYTE1(_temp);
     data_to_send[_cnt++] = BYTE0(_temp);
 
-    _temp = (int)(current * 100); //µçÁ÷
+    _temp = (int)(current * 100); //ï¿½ï¿½ï¿½ï¿½
     data_to_send[_cnt++] = BYTE1(_temp);
     data_to_send[_cnt++] = BYTE0(_temp);
 
@@ -633,11 +633,11 @@ void ANO_Data_Send_Voltage_Current(float volatge, float current)
 }
 
 /*******************************************
-* º¯ Êý Ãû£ºANO_Data_Send_User_Data
-* ¹¦    ÄÜ£º·¢ËÍÓÃ»§×Ô¶¨ÒåÊý¾Ý
-* ÊäÈë²ÎÊý£º
-* ·µ »Ø Öµ£ºnone
-* ×¢    Òâ£ºnone
+* ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ANO_Data_Send_User_Data
+* ï¿½ï¿½    ï¿½Ü£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+* ï¿½ï¿½ ï¿½ï¿½ Öµï¿½ï¿½none
+* ×¢    ï¿½â£ºnone
 ********************************************/
 void ANO_Data_Send_User_Data(int32_t data1, int32_t data2, int32_t data3, int32_t data4)
 {
@@ -684,8 +684,8 @@ void ANO_Data_Send_User_Data(int32_t data1, int32_t data2, int32_t data3, int32_
 }
 
 /*******************************************
-* º¯ Êý Ãû£ºANO_SEND_StateMachine
-* ¹¦    ÄÜ£ºÒÀ´Î·¢ËÍ¸÷×éÊý¾Ý
+* ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ANO_SEND_StateMachine
+* ï¿½ï¿½    ï¿½Ü£ï¿½ï¿½ï¿½ï¿½Î·ï¿½ï¿½Í¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 ********************************************/
 
 float temp, kalman_temp;
@@ -695,33 +695,33 @@ void ANO_SEND_StateMachine(void)
 
     switch (++cnt)
     {
-    case 1: // ·¢ËÍ»ù±¾°æ±¾ÐÅÏ¢(Ó²¼þÖÖÀà¡¢Ó²¼þ¡¢Èí¼þ¡¢Ð­Òé¡¢Bootloader°æ±¾)
+    case 1: // ï¿½ï¿½ï¿½Í»ï¿½ï¿½ï¿½ï¿½æ±¾ï¿½ï¿½Ï¢(Ó²ï¿½ï¿½ï¿½ï¿½ï¿½à¡¢Ó²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð­ï¿½é¡¢Bootloaderï¿½æ±¾)
         ANO_Data_Send_Version((int)HardwareType, (int)HardwareVER, (int)SoftwareVER, (int)ProtocolVER, (int)BootloaderVER);
         break;
-    case 2: // ·¢ËÍ»ù±¾ÐÅÏ¢(Å·À­½Ç¡¢¸ß¶È¡¢Ëø¶¨×´Ì¬)
+    case 2: // ï¿½ï¿½ï¿½Í»ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢(Å·ï¿½ï¿½ï¿½Ç¡ï¿½ï¿½ß¶È¡ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬)
         ANO_Data_Send_Status(rovInfo.jy901.roll, rovInfo.jy901.pitch, rovInfo.jy901.yaw, rovInfo.depthSensor.depth);
         break;
-    case 3: // ·¢ËÍ´«¸ÐÆ÷ÊýÖµ(¼ÓËÙ¶È¡¢½ÇËÙ¶È¡¢´Å³¡)
+    case 3: // ï¿½ï¿½ï¿½Í´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµ(ï¿½ï¿½ï¿½Ù¶È¡ï¿½ï¿½ï¿½ï¿½Ù¶È¡ï¿½ï¿½Å³ï¿½)
         ANO_DT_Send_Senser(rovInfo.jy901.acc.x, rovInfo.jy901.acc.y, rovInfo.jy901.acc.z,
                            rovInfo.jy901.gyro.x, rovInfo.jy901.gyro.y, rovInfo.jy901.gyro.z,
                            rovInfo.jy901.mag.x, rovInfo.jy901.mag.y, rovInfo.jy901.mag.z);
         break;
-    case 4: // ·¢ËÍÍÆ½øÆ÷½ÓÊÕ»úÒ¡¸ËÖµ
+    case 4: // ï¿½ï¿½ï¿½ï¿½ï¿½Æ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õ»ï¿½Ò¡ï¿½ï¿½Öµ
         ANO_DT_Send_RCData(rovdev.propellerPower.leftUp + 1500, rovdev.propellerPower.rightUp + 1500,
                            rovdev.propellerPower.leftDown + 1500, rovdev.propellerPower.rightDown + 1500,
                            rovdev.propellerPower.leftMiddle + 1500, rovdev.propellerPower.rightMiddle + 1500,
                            0, 0, 0, 0);
         break;
-    case 5: // ·¢ËÍµçÔ´ÐÅÏ¢(µçÑ¹¡¢µçÁ÷)
+    case 5: // ï¿½ï¿½ï¿½Íµï¿½Ô´ï¿½ï¿½Ï¢(ï¿½ï¿½Ñ¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)
         ANO_Data_Send_Voltage_Current(rovInfo.powerSource.voltage, rovInfo.powerSource.current);
         break;
-    case 6: // ·¢ËÍ¸ß¶ÈÊý¾Ý (ÆøÑ¹¼Æ¸ß¶È¡¢³¬Éù²¨¸ßµÍ)
+    case 6: // ï¿½ï¿½ï¿½Í¸ß¶ï¿½ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½Ñ¹ï¿½Æ¸ß¶È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ßµï¿½)
         ANO_DT_Send_High(rovInfo.depthSensor.pressure, rovInfo.depthSensor.init_pressure);
         break;
-    case 7: // ·¢ËÍËùÓÐPIDÊý¾Ý
+    case 7: // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½PIDï¿½ï¿½ï¿½ï¿½
         if (ANO_Send_PID_Flag)
         {
-            ANO_Send_PID_Flag = 0; // ·¢ËÍPID±êÖ¾ ÇåÁã
+            ANO_Send_PID_Flag = 0; // ï¿½ï¿½ï¿½ï¿½PIDï¿½ï¿½Ö¾ ï¿½ï¿½ï¿½ï¿½
             ANO_DT_Send_All_PID();
         }
         break;
@@ -782,5 +782,5 @@ void ANO_DT_Send_All_PID(void)
                          rovdev.robot_arm.nMax,
                          rovdev.robot_arm.pMax,
                          rovdev.robot_arm.speed);
-    printf("read pid params -> success!");
+    printf("read pid params -> success!\n");
 }

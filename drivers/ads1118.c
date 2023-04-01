@@ -40,7 +40,7 @@ static uint16_t ads1118_transmit(int fd, int channel)
         ads1118.config |= (MUX_S3 << 12);
         break;
     default:
-        printf("ads1118 channel range in [0, 3]");
+        printf("ads1118 channel range in [0, 3]\n");
     }
 
     spiData[0] = (ads1118.config >> 8) & 0xff; // 写入配置寄存器 (datasheet P24)

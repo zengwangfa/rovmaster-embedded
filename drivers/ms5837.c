@@ -226,7 +226,7 @@ static int myDigitalRead(struct wiringPiNodeStruct *node, int pin)
         return (int)(ms5837.pressure * 100); // 转换单位为Pa
     }
 
-    printf("ms5837 channel range in [0, 1]");
+    printf("ms5837 channel range in [0, 1]\n");
     return -1;
 }
 
